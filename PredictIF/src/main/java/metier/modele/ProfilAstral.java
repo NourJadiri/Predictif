@@ -4,26 +4,36 @@ import util.AstroNetApi;
 
 import javax.persistence.Embeddable;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Embeddable
-public class ProfilAstral {
+public class ProfilAstral implements Serializable {
 
-    List<String> profil;
-    AstroNetApi astroNetApi;
+
+    String signeZodiaque;
+    String signeChinois;
+    String couleur;
+    String animal;
 
     public ProfilAstral() {
 
     }
 
-    public ProfilAstral( String prenom , Date date) throws IOException {
-        astroNetApi = new AstroNetApi();
-        initProfil( prenom , date);
-    }
-
-    // Initialisation du profil astral à partir du prénom et de la date de naissance
-    public void initProfil ( String prenom , Date date ) throws IOException {
-        profil = astroNetApi.getProfil( prenom , date );
+    public ProfilAstral( String prenom , Date date){
+        AstroNetApi astroNetApi = new AstroNetApi();
+        try {
+            List<String> profil = astroNetApi.getProfil(prenom, date);
+            signeZodiaque = profil.get(0);
+            signeChinois = profil.get(1);
+            couleur = profil.get(2);
+            animal = profil.get(3);
+        } catch (IOException ex) {
+            Logger.getLogger(ProfilAstral.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }

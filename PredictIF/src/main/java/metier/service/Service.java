@@ -5,9 +5,14 @@
  */
 package metier.service;
 
+import com.sun.prism.j2d.J2DPipeline;
 import dao.ClientDao;
+import dao.EmployeDao;
 import dao.JpaUtil;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import metier.modele.Client;
+import metier.modele.Employe;
 import util.Message;
 
 /**
@@ -88,7 +93,7 @@ public class Service {
             Client client = clientDao.chercherParId(id);
             if(client != null){
                 if (client.getMotDePasse().equals(MDP)){
-                    res= client;
+                    res = client;
                 }
             }
         } catch (Exception e){
@@ -99,5 +104,23 @@ public class Service {
         return res;
     }
     
+    public void initEmploye ( Employe e ){
+        
+        JpaUtil.creerContextePersistance();
+        
+        try {
+            JpaUtil.ouvrirTransaction();
+            employeDao.creer(e);
+            JpaUtil.validerTransaction();
+        } catch (Exception ex) {
+            JpaUtil.annulerTransaction();
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            JpaUtil.fermerContextePersistance();
+        }
+    }
+    
     protected ClientDao clientDao = new ClientDao();
+    protected EmployeDao employeDao = new EmployeDao();
 }

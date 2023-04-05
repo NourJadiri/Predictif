@@ -8,6 +8,7 @@ package view;
 import dao.JpaUtil;
 
 import metier.modele.Client;
+import metier.modele.Employe;
 import metier.service.Service;
 
 /**
@@ -21,7 +22,8 @@ public class Main {
      */
     public static void main(String[] args){
        JpaUtil.creerFabriquePersistance();
-       testerInscriptionClient();
+       //testerInscriptionClient();
+       testerInscriptionEmploye();
        JpaUtil.fermerFabriquePersistance();
     }
     
@@ -36,6 +38,16 @@ public class Main {
                 System.out.println("> Echec inscription");
             }
         }
+    }
+    
+    public static void testerInscriptionEmploye(){
+        Employe irma = new Employe("Irma", "Camille", 'F', "0654354354", "camille.irma@predictif.if", "motDePasse");
+        
+        Service sc = new Service();
+        
+        sc.initEmploye(irma);
+        
+        System.out.println(irma);
     }
     
     

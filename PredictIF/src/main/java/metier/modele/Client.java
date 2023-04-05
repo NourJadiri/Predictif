@@ -5,7 +5,10 @@
  */
 package metier.modele;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.*;
 
 /**
@@ -27,6 +30,11 @@ public class Client {
         this.mail = mail;
         this.numTel = numTel;
         this.motDePasse = motDePasse;
+        try {
+            this.profilAstral = new ProfilAstral(prenom, dateNaissance);
+        } catch (Exception ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     
@@ -107,4 +115,6 @@ public class Client {
     private String mail;
     private String numTel;
     private String motDePasse;
+    @Embedded
+    private ProfilAstral profilAstral;
 }
