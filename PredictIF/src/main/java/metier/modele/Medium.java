@@ -5,15 +5,26 @@
  */
 package metier.modele;
 
+import java.io.Serializable;
+import javax.persistence.*;
+
 /**
  *
  * @author ghembise
  */
-public abstract class Medium {
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Medium implements Serializable {
     
     private String denomination;
     private String genre;
     private String presentation;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long mediumId;
+
+    public Medium() {
+    }
 
     public Medium(String denomination, String genre, String presentation) {
         this.denomination = denomination;
@@ -43,6 +54,14 @@ public abstract class Medium {
 
     public void setPresentation(String presentation) {
         this.presentation = presentation;
+    }
+
+    public Long getMediumId() {
+        return mediumId;
+    }
+
+    public void setMediumId(Long mediumId) {
+        this.mediumId = mediumId;
     }
     
 }
