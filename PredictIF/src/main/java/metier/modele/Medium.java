@@ -12,7 +12,7 @@ import javax.persistence.*;
  *
  * @author ghembise
  */
-@Entity
+@MappedSuperclass
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Medium implements Serializable {
     

@@ -5,10 +5,13 @@
  */
 package metier.modele;
 
+import javax.persistence.Entity;
+
 /**
  *
  * @author ghembise
  */
+@Entity
 public class Astrologue extends Medium{
     
     private String formation;
@@ -19,6 +22,9 @@ public class Astrologue extends Medium{
         this.formation = formation;
         this.promotion = promotion;
     }
-    
-    
+
+
+    public Astrologue() {
+
+    }
 }

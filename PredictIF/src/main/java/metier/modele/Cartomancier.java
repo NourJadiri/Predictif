@@ -5,14 +5,20 @@
  */
 package metier.modele;
 
+import javax.persistence.Entity;
+
 /**
  *
  * @author ghembise
  */
+@Entity
 public class Cartomancier extends Medium{
 
     public Cartomancier(String denomination, String genre, String presentation) {
         super(denomination, genre, presentation);
     }
-    
+
+    public Cartomancier() {
+
+    }
 }

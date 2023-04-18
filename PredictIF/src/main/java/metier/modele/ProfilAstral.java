@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 @Embeddable
 public class ProfilAstral implements Serializable {
 
-
     String signeZodiaque;
     String signeChinois;
     String couleur;
@@ -23,7 +22,7 @@ public class ProfilAstral implements Serializable {
 
     }
 
-    public ProfilAstral( String prenom , Date date){
+    public ProfilAstral( String prenom , Date date ){
         AstroNetApi astroNetApi = new AstroNetApi();
         try {
             List<String> profil = astroNetApi.getProfil(prenom, date);

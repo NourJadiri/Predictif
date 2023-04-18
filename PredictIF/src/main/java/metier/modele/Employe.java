@@ -33,7 +33,7 @@ public class Employe implements Serializable {
     public Employe() {
     }
 
-    public Employe(String nom, String prenom, char genre, String telephone, String email, String motDePasse) {
+    public Employe( String nom, String prenom, char genre, String telephone, String email, String motDePasse ) {
         this.nom = nom;
         this.prenom = prenom;
         this.genre = genre;

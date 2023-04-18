@@ -5,15 +5,15 @@
  */
 package metier.service;
 
-import com.sun.prism.j2d.J2DPipeline;
 import dao.ClientDao;
 import dao.EmployeDao;
 import dao.JpaUtil;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import metier.modele.Client;
 import metier.modele.Employe;
 import util.Message;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,9 +29,12 @@ public class Service {
     }
     
     public Long inscriptionClient(Client client) {
+        // Message succès inscription
         String msgSucces = "Bonjour " + client.getPrenom() + 
                 " nous vous confirmons votre inscription au service PREDICT'IF. "
                 + "Rendez-vous vite sur notre site pour consulter votre profil astrologique et profiter des dons incroyables de nos médiums"; 
+
+        // Message echec inscription
         String msgErreur = "Bonjour " + client.getPrenom() +
                 " votre inscription au service PREDICT'IF a malencontreusement échoué... Merci de recommencer ultérieurement";
         Long res = null;
