@@ -5,8 +5,9 @@
  */
 package metier.modele;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.*;
@@ -117,4 +118,7 @@ public class Client {
     private String motDePasse;
     @Embedded
     private ProfilAstral profilAstral;
+
+    @OneToMany(mappedBy = "Client")
+    private final List<Consultation> consultations = new ArrayList<>();
 }

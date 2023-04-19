@@ -6,6 +6,8 @@
 package metier.modele;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 /**
  *
@@ -29,6 +31,8 @@ public class Employe implements Serializable {
     private String email;
     private String motDePasse;
     private disponibilite dispo;
+    @OneToMany
+    private final List<Consultation> consultations = new ArrayList<>();
 
     public Employe() {
     }

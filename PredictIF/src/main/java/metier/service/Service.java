@@ -8,8 +8,10 @@ package metier.service;
 import dao.ClientDao;
 import dao.EmployeDao;
 import dao.JpaUtil;
+import dao.MediumDao;
 import metier.modele.Client;
 import metier.modele.Employe;
+import metier.modele.Medium;
 import util.Message;
 
 import java.util.logging.Level;
@@ -22,7 +24,7 @@ import java.util.logging.Logger;
 
 public class Service {
     
-    private String mail = "contact@predict.if"; 
+    private final String mail = "contact@predict.if";
     
     public Service(){
         
@@ -37,7 +39,7 @@ public class Service {
         // Message echec inscription
         String msgErreur = "Bonjour " + client.getPrenom() +
                 " votre inscription au service PREDICT'IF a malencontreusement échoué... Merci de recommencer ultérieurement";
-        Long res = null;
+        Long res;
         JpaUtil.creerContextePersistance();
         try {
             JpaUtil.ouvrirTransaction();
@@ -58,7 +60,7 @@ public class Service {
     
     
     public Client rechercherClientparId(Long id){
-        Client resultat = null;
+        Client resultat;
         JpaUtil.creerContextePersistance();
         try {
             resultat = clientDao.chercherParId(id);
@@ -123,7 +125,21 @@ public class Service {
             JpaUtil.fermerContextePersistance();
         }
     }
-    
+
+    public void initMedium( Medium m ){
+        JpaUtil.creerContextePersistance();
+
+        try {
+            JpaUtil.ouvrirTransaction();
+            mediumDao.creer(m);
+            JpaUtil.validerTransaction();
+        } catch (Exception ex) {
+            JpaUtil.annulerTransaction();
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
+    protected MediumDao mediumDao = new MediumDao();
 }

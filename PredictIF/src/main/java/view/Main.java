@@ -7,8 +7,7 @@ package view;
 
 import dao.JpaUtil;
 
-import metier.modele.Client;
-import metier.modele.Employe;
+import metier.modele.*;
 import metier.service.Service;
 
 /**
@@ -22,22 +21,24 @@ public class Main {
      */
     public static void main(String[] args){
        JpaUtil.creerFabriquePersistance();
-       //testerInscriptionClient();
+       testerInscriptionClient();
        testerInscriptionEmploye();
+       testerInitMedium();
        JpaUtil.fermerFabriquePersistance();
     }
     
     public static void testerInscriptionClient(){
        Client ada = new Client("Lovelace", "Ada", new java.util.Date(System.currentTimeMillis()),"130 Avenue Albert Einstein","ada.lovelace@insa-lyon.fr","0669696969", "LAda");
        Service Sc = new Service();
-        for (int i = 0; i < 2; i++) {
+       Long id = Sc.inscriptionClient(ada);
+        /*for (int i = 0; i < 2; i++) {
             Long id = Sc.inscriptionClient(ada);
             if(id != null){
                 System.out.println("> Succès inscription");
             } else {
                 System.out.println("> Echec inscription");
             }
-        }
+        }*/
     }
     
     public static void testerInscriptionEmploye(){
@@ -58,6 +59,17 @@ public class Main {
         sc.initEmploye(employee5);
 
     }
-    
+
+    public static void testerInitMedium(){
+        Spirite medium0 = new Spirite("Irma", "F", "Shalala", "Boule de cristal");
+        Astrologue medium1 = new Astrologue("Monsieur M", "M", "Nous sommes parti", "Luminar aca", "1976" );
+        Cartomancier medium2 = new Cartomancier("Twisted Fate", "M", "Seul Link peut vaincre Ganon");
+
+        Service sc = new Service();
+
+        sc.initMedium(medium0);
+        sc.initMedium(medium1);
+        sc.initMedium(medium2);
+    }
     
 }

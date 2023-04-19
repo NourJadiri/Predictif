@@ -5,6 +5,7 @@
  */
 package metier.modele;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -12,6 +13,7 @@ import javax.persistence.Entity;
  * @author ghembise
  */
 @Entity
+@DiscriminatorValue("Spirite")
 public class Spirite extends Medium {
 
     private String support;

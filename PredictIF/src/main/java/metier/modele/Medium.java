@@ -6,14 +6,20 @@
 package metier.modele;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 /**
  *
  * @author ghembise
  */
-@MappedSuperclass
+//Je suis pas trop sur de ça car
+// je pense pour les requetes de recherche on aura besoin de la table Medium + le ManytoOne dans consultations fonctionnera pas
+//@MappedSuperclass
+@Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name="TYPE_MEDIUM")
 public abstract class Medium implements Serializable {
     
     private String denomination;
@@ -22,6 +28,8 @@ public abstract class Medium implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long mediumId;
+    @OneToMany
+    private final List<Consultation> consultations = new ArrayList<>();
 
     public Medium() {
     }
