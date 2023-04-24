@@ -31,8 +31,8 @@ public class Employe implements Serializable {
     private String email;
     private String motDePasse;
     private disponibilite dispo;
-    @OneToMany
-    private final List<Consultation> consultations = new ArrayList<>();
+
+
 
     public Employe() {
     }

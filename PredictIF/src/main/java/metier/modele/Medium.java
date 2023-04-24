@@ -12,24 +12,18 @@ import javax.persistence.*;
 
 /**
  *
- * @author ghembise
+ * @authors ghembise mneljadiri cdjouadi
  */
-//Je suis pas trop sur de ça car
-// je pense pour les requetes de recherche on aura besoin de la table Medium + le ManytoOne dans consultations fonctionnera pas
-//@MappedSuperclass
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name="TYPE_MEDIUM")
 public abstract class Medium implements Serializable {
     
-    private String denomination;
-    private String genre;
-    private String presentation;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long mediumId;
-    @OneToMany
-    private final List<Consultation> consultations = new ArrayList<>();
+    private Long id;
+    private String presentation;
+    private String genre;
+    private String denomination;
 
     public Medium() {
     }
@@ -64,12 +58,21 @@ public abstract class Medium implements Serializable {
         this.presentation = presentation;
     }
 
-    public Long getMediumId() {
-        return mediumId;
+    public Long getId() {
+        return id;
     }
 
-    public void setMediumId(Long mediumId) {
-        this.mediumId = mediumId;
+    public void setId(Long id) {
+        this.id = id;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Medium{" +
+                "id=" + id +
+                ", presentation='" + presentation + '\'' +
+                ", genre='" + genre + '\'' +
+                ", denomination='" + denomination + '\'' +
+                '}';
+    }
 }

@@ -10,6 +10,11 @@ import dao.JpaUtil;
 import metier.modele.*;
 import metier.service.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+
 /**
  *
  * @author ghembise
@@ -20,25 +25,26 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args){
-       JpaUtil.creerFabriquePersistance();
-       testerInscriptionClient();
-       testerInscriptionEmploye();
-       testerInitMedium();
+        JpaUtil.creerFabriquePersistance();
+        //testerInscriptionClient();
+        //testerInscriptionEmploye();
+        //testerAjoutConsultation();
+        //testerAjoutMedium();
+        testerAjoutConsultation();
        JpaUtil.fermerFabriquePersistance();
     }
     
     public static void testerInscriptionClient(){
        Client ada = new Client("Lovelace", "Ada", new java.util.Date(System.currentTimeMillis()),"130 Avenue Albert Einstein","ada.lovelace@insa-lyon.fr","0669696969", "LAda");
        Service Sc = new Service();
-       Long id = Sc.inscriptionClient(ada);
-        /*for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             Long id = Sc.inscriptionClient(ada);
             if(id != null){
                 System.out.println("> Succès inscription");
             } else {
                 System.out.println("> Echec inscription");
             }
-        }*/
+        }
     }
     
     public static void testerInscriptionEmploye(){
@@ -60,16 +66,42 @@ public class Main {
 
     }
 
-    public static void testerInitMedium(){
-        Spirite medium0 = new Spirite("Irma", "F", "Shalala", "Boule de cristal");
-        Astrologue medium1 = new Astrologue("Monsieur M", "M", "Nous sommes parti", "Luminar aca", "1976" );
-        Cartomancier medium2 = new Cartomancier("Twisted Fate", "M", "Seul Link peut vaincre Ganon");
+    public static void testerAjoutMedium(){
+
+        System.out.println("TEST AJOUT MEDIUM");
+        System.out.println("-----------------");
+
+        // Creating a new Spirite object
+        Spirite spirite = new Spirite("The Ghost Whisperer", "Female", "I can communicate with the dead", "Crystal ball");
+
+        // Creating a new Cartomancier object
+        Cartomancier cartomancier = new Cartomancier("Madame Destiny", "Female", "I can predict your future using tarot cards");
+
+        // Creating a new Astrologue object
+        Astrologue astrologue = new Astrologue("Master of Astrology", "2020", "Professor Stars", "Male", "I can read the stars and predict your fate");
 
         Service sc = new Service();
-
-        sc.initMedium(medium0);
-        sc.initMedium(medium1);
-        sc.initMedium(medium2);
+        sc.ajouterMedium(spirite);
+        sc.ajouterMedium(cartomancier);
+        sc.ajouterMedium(astrologue);
     }
+
+    public static void testerAjoutConsultation() {
+        Service sc = new Service();
+
+        Employe Camille = sc.rechercherEmploye(1L);
+
+        Medium gwen = new Spirite("Gwen","F","Bonsoir","Livre");
+        sc.ajouterMedium(gwen);
+
+        Client ada = sc.rechercherClientparId(1L);
+
+        Consultation c1 = new Consultation(new Date(), new Date(), Camille, ada, gwen, "oui" );
+        sc.ajouterConsultation(c1);
+
+        System.out.println(c1);
+    }
+
+    
     
 }

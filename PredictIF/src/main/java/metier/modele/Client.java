@@ -5,9 +5,8 @@
  */
 package metier.modele;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.*;
@@ -18,6 +17,21 @@ import javax.persistence.*;
  */
 @Entity
 public class Client {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String nom;
+    private String prenom;
+    @Temporal(TemporalType.DATE)
+    private Date dateNaissance;
+    private String adressePostale;
+    @Column(unique = true)
+    private String mail;
+    private String numTel;
+    private String motDePasse;
+    @Embedded
+    private ProfilAstral profilAstral;
     
     protected Client(){
         
@@ -31,6 +45,7 @@ public class Client {
         this.mail = mail;
         this.numTel = numTel;
         this.motDePasse = motDePasse;
+
         try {
             this.profilAstral = new ProfilAstral(prenom, dateNaissance);
         } catch (Exception ex) {
@@ -104,21 +119,5 @@ public class Client {
         return "Client{" + "id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", dateNaissance=" + dateNaissance + ", adressePostale=" + adressePostale + ", mail=" + mail + ", motDePasse=" + motDePasse + '}';
     }
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String nom;
-    private String prenom;
-    @Temporal(TemporalType.DATE)
-    private Date dateNaissance;
-    private String adressePostale;
-    @Column(unique = true)
-    private String mail;
-    private String numTel;
-    private String motDePasse;
-    @Embedded
-    private ProfilAstral profilAstral;
 
-    @OneToMany(mappedBy = "Client")
-    private final List<Consultation> consultations = new ArrayList<>();
 }

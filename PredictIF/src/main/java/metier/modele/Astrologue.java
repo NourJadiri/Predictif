@@ -5,7 +5,6 @@
  */
 package metier.modele;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -13,13 +12,12 @@ import javax.persistence.Entity;
  * @author ghembise
  */
 @Entity
-@DiscriminatorValue("Astrologue")
 public class Astrologue extends Medium{
     
     private String formation;
     private String promotion;
 
-    public Astrologue( String denomination, String genre, String presentation, String formation, String promotion ) {
+    public Astrologue(String formation, String promotion, String denomination, String genre, String presentation) {
         super(denomination, genre, presentation);
         this.formation = formation;
         this.promotion = promotion;
@@ -29,4 +27,5 @@ public class Astrologue extends Medium{
     public Astrologue() {
 
     }
+
 }

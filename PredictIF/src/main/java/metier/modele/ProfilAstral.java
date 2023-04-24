@@ -26,13 +26,17 @@ public class ProfilAstral implements Serializable {
         AstroNetApi astroNetApi = new AstroNetApi();
         try {
             List<String> profil = astroNetApi.getProfil(prenom, date);
-            signeZodiaque = profil.get(0);
-            signeChinois = profil.get(1);
-            couleur = profil.get(2);
-            animal = profil.get(3);
+            initProfilAstral(profil);
         } catch (IOException ex) {
             Logger.getLogger(ProfilAstral.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+
+    private void initProfilAstral(List<String> profil){
+        signeZodiaque = profil.get(0);
+        signeChinois = profil.get(1);
+        couleur = profil.get(2);
+        animal = profil.get(3);
     }
 }

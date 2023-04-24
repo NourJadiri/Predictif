@@ -15,20 +15,22 @@ import metier.modele.Client;
  * @author ghembise
  */
 public class ClientDao {
-    public void creer(Client client){
+    public void create(Client client){
         EntityManager em = JpaUtil.obtenirContextePersistance();
         em.persist(client);
     }
     
-    public Client chercherParId(Long clientId){
+    public Client findById(Long clientId){
         EntityManager em = JpaUtil.obtenirContextePersistance();
         return em.find(Client.class, clientId);
     }
     
-    public Client chercherParMail(String clientMail){
+    public Client findByMail(String clientMail){
         EntityManager em = JpaUtil.obtenirContextePersistance();
         TypedQuery<Client> query = em.createQuery("SELECT c FROM Client c Where c.mail = :mail", Client.class);
         query.setParameter("mail", clientMail);
+
+        // Extraction de la liste des clients qui ont
         List<Client> clients = query.getResultList();
         Client result = null;
         if (!clients.isEmpty()){

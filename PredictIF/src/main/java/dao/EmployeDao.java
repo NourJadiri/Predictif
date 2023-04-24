@@ -16,16 +16,16 @@ import metier.modele.Employe;
  */
 public class EmployeDao {
     
-    public void creer(Employe e){
+    public void create(Employe e){
         JpaUtil.obtenirContextePersistance().persist(e);
     }
     
-    public Employe chercherParId(Long employeId){
+    public Employe findById(Long employeId){
         EntityManager em = JpaUtil.obtenirContextePersistance();
         return em.find(Employe.class, employeId);
     }
     
-    public Employe chercherParMail(String employeMail){
+    public Employe findByMail(String employeMail){
         EntityManager em = JpaUtil.obtenirContextePersistance();
         
         TypedQuery<Employe> query = em.createQuery("SELECT e FROM Employe e Where e.email = :mail", Employe.class);

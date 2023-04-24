@@ -5,36 +5,64 @@ import java.util.Date;
 
 @Entity
 public class Consultation {
-
-
-    public Consultation() {
-    }
-
-    public Consultation(Date date, Date heure, String commentaire, Employe employe, Medium medium, Client client) {
-        this.date = date;
-        this.heure = heure;
-        this.commentaire = commentaire;
-        this.employe = employe;
-        this.medium = medium;
-        this.client = client;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-
     @Temporal(TemporalType.DATE)
     private Date date;
     @Temporal(TemporalType.TIME)
     private Date heure;
-    private String commentaire;
-
     @ManyToOne
     private Employe employe;
     @ManyToOne
-    private Medium medium;
-    @ManyToOne
     private Client client;
+    @ManyToOne
+    private Medium medium;
 
+    private String commentaire;
+
+    public Consultation() {
+    }
+
+    public Consultation(Date date, Date heure, Employe employe, Client client, Medium medium, String commentaire) {
+        this.date = date;
+        this.heure = heure;
+        this.employe = employe;
+        this.client = client;
+        this.medium = medium;
+        this.commentaire = commentaire;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Consultation{" +
+                "id=" + id +
+                ", date=" + date +
+                ", heure=" + heure +
+                ", employe=" + employe +
+                ", client=" + client +
+                ", medium=" + medium +
+                ", commentaire='" + commentaire + '\'' +
+                '}';
+    }
 }
