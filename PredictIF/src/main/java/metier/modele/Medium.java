@@ -16,14 +16,16 @@ import javax.persistence.*;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "type_medium")
 public abstract class Medium implements Serializable {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String presentation;
-    private String genre;
+    @Column(insertable = false , updatable = false)
+    private String type_medium;
     private String denomination;
+    private String genre;
+    private String presentation;
 
     public Medium() {
     }

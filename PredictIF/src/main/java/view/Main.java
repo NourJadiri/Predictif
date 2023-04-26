@@ -25,12 +25,14 @@ public class Main {
      */
     public static void main(String[] args){
         JpaUtil.creerFabriquePersistance();
+        initDb();
         //testerInscriptionClient();
         //testerInscriptionEmploye();
         //testerAjoutConsultation();
         //testerAjoutMedium();
         //testerAjoutConsultation();
-        initDb();
+        //testerFiltrageGenre();
+        testerFiltrageType();
        JpaUtil.fermerFabriquePersistance();
     }
 
@@ -63,6 +65,29 @@ public class Main {
         Service sc = new Service();
 
         sc.initMediums();
+    }
+
+    public static void testerFiltrageGenre(){
+        Service sc = new Service();
+
+        List<Medium> mediums = sc.filtrerMediums("F",new ArrayList<>());
+
+        for(Medium m : mediums){
+            System.out.println(m);
+        }
+    }
+
+    public static void testerFiltrageType(){
+        Service sc = new Service();
+        ArrayList<String> types = new ArrayList<>();
+        types.add("Astrologue");
+        types.add("Cartomancien");
+
+        List<Medium> mediums = sc.filtrerMediums("M", types);
+
+        for(Medium m : mediums){
+            System.out.println(m);
+        }
     }
 
     public static void testerAjoutConsultation() {
