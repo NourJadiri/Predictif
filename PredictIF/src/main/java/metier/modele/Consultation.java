@@ -12,11 +12,11 @@ public class Consultation {
     private Date date;
     @Temporal(TemporalType.TIME)
     private Date heure;
-    @ManyToOne( cascade = CascadeType.PERSIST )
+    @ManyToOne
     private Employe employe;
-    @ManyToOne( cascade = CascadeType.PERSIST )
+    @ManyToOne
     private Client client;
-    @ManyToOne( cascade = CascadeType.PERSIST )
+    @ManyToOne
     private Medium medium;
 
     private String commentaire;
