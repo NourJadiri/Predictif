@@ -130,7 +130,6 @@ public class Service {
         clients.add(client4);
         clients.add(client5);
 
-
         for(Client c : clients){
             JpaUtil.creerContextePersistance();
             try{
@@ -199,7 +198,6 @@ public class Service {
         employes.add(employe4);
         employes.add(employe5);
 
-
         for(Employe e : employes){
             JpaUtil.creerContextePersistance();
             try{
@@ -225,7 +223,7 @@ public class Service {
         JpaUtil.creerContextePersistance();
         try{
             JpaUtil.ouvrirTransaction();
-            consultationDAO.create(consultation);
+            consultationDao.create(consultation);
             JpaUtil.validerTransaction();
         }
         catch (Exception ex){
@@ -244,7 +242,7 @@ public class Service {
         List<Consultation> top5;
 
         try{
-            top5 = consultationDAO.listerConsultationsRecentes(client);
+            top5 = consultationDao.listerConsultationsRecentes(client);
         }catch (Exception ex){
             top5=null;
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
@@ -263,7 +261,7 @@ public class Service {
 
         try{
             JpaUtil.ouvrirTransaction();
-            mediumDAO.create(medium);
+            mediumDao.create(medium);
             JpaUtil.validerTransaction();
         }catch( Exception ex ){
             JpaUtil.annulerTransaction();
@@ -280,7 +278,7 @@ public class Service {
         JpaUtil.creerContextePersistance();
 
         try{
-            medium = mediumDAO.findById(id);
+            medium = mediumDao.findById(id);
         }catch (Exception ex){
             medium = null;
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE,null,ex);
@@ -297,7 +295,7 @@ public class Service {
         JpaUtil.creerContextePersistance();
 
         try{
-            resultat = mediumDAO.filter(genre , types);
+            resultat = mediumDao.filter(genre , types);
         }catch(Exception ex){
             resultat = null;
         }finally{
@@ -307,6 +305,18 @@ public class Service {
         return resultat;
     }
 
+    public List<Medium> favouritesMediumsList(Client client){
+        List<Medium> mediumList;
+        JpaUtil.creerContextePersistance();
+        try {
+            mediumList = mediumDao.sortMediumsByNumberOfConsultations(client);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return  mediumList;
+    }
     public List<Medium> initMediums(){
         ArrayList<Medium> mediums = new ArrayList<>();
 
@@ -340,7 +350,7 @@ public class Service {
             JpaUtil.creerContextePersistance();
             try{
                 JpaUtil.ouvrirTransaction();
-                mediumDAO.create(m);
+                mediumDao.create(m);
                 JpaUtil.validerTransaction();
             }catch (Exception ex){
                 JpaUtil.annulerTransaction();
@@ -354,6 +364,6 @@ public class Service {
 
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
-    protected ConsultationDao consultationDAO = new ConsultationDao();
-    protected MediumDao mediumDAO = new MediumDao();
+    protected ConsultationDao consultationDao= new ConsultationDao();
+    protected MediumDao mediumDao = new MediumDao();
 }

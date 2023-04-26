@@ -26,9 +26,22 @@ public class ConsultationDao {
         TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
         query.setParameter("client" , client);
 
-        List<Consultation> top5 = query.setMaxResults(5).getResultList();
-
-        return top5;
+        return query.setMaxResults(5).getResultList();
     }
+
+    public List<Consultation> showHistoricConsultations(Client client){
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "SELECT c FROM Consultation c " +
+                "WHERE c.client = :client "+
+                "ORDER BY c.date, c.heure desc";
+
+        TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
+        query.setParameter("client" , client);
+
+        return query.getResultList();
+    }
+
+
 
 }
