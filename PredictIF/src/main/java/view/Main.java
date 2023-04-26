@@ -29,10 +29,18 @@ public class Main {
         //testerInscriptionEmploye();
         //testerAjoutConsultation();
         //testerAjoutMedium();
-        testerAjoutConsultation();
+        //testerAjoutConsultation();
+        initDb();
        JpaUtil.fermerFabriquePersistance();
     }
-    
+
+    public static void initDb(){
+        Service sc = new Service();
+        sc.initEmployes();
+        sc.initClients();
+        sc.initMediums();
+    }
+
     public static void testerInscriptionClient(){
        Client ada = new Client("Lovelace", "Ada", new java.util.Date(System.currentTimeMillis()),"130 Avenue Albert Einstein","ada.lovelace@insa-lyon.fr","0669696969", "LAda");
        Service sc = new Service();
@@ -45,45 +53,16 @@ public class Main {
             }
         }
     }
-    
-    public static void testerInscriptionEmploye(){
-        Employe employee0 = new Employe("Irma", "Camille", 'F', "0654354354", "camille.irma@predictif.if", "motDePasse");
-        Employe employee1 = new Employe("Doe", "John", 'M', "555-1234", "john.doe@example.com", "password123");
-        Employe employee2 = new Employe("Smith", "Jane", 'F', "555-5678", "jane.smith@example.com", "abcdef");
-        Employe employee3 = new Employe("Johnson", "Bob", 'M', "555-4321", "bob.johnson@example.com", "foobar");
-        Employe employee4 = new Employe("Lee", "Alice", 'F', "555-8765", "alice.lee@example.com", "qwerty");
-        Employe employee5 = new Employe("Garcia", "Juan", 'M', "555-9876", "juan.garcia@example.com", "p@ssword!");
 
-        Service sc = new Service();
-        
-        sc.ajouterEmploye(employee0);
-        sc.ajouterEmploye(employee1);
-        sc.ajouterEmploye(employee2);
-        sc.ajouterEmploye(employee3);
-        sc.ajouterEmploye(employee4);
-        sc.ajouterEmploye(employee5);
-
-    }
 
     public static void testerAjoutMedium(){
 
         System.out.println("TEST AJOUT MEDIUM");
         System.out.println("-----------------");
 
-        // Creating a new Spirite object
-        Spirite spirite = new Spirite("The Ghost Whisperer", "Female", "I can communicate with the dead", "Crystal ball");
-
-        // Creating a new Cartomancier object
-        Cartomancien cartomancier = new Cartomancien("Madame Destiny", "Female", "I can predict your future using tarot cards");
-
-        // Creating a new Astrologue object
-        Astrologue astrologue = new Astrologue("Master of Astrology", "2020", "Professor Stars", "Male", "I can read the stars and predict your fate");
-
         Service sc = new Service();
 
-        sc.ajouterMedium(spirite);
-        sc.ajouterMedium(cartomancier);
-        sc.ajouterMedium(astrologue);
+        sc.initMediums();
     }
 
     public static void testerAjoutConsultation() {
@@ -159,5 +138,5 @@ public class Main {
 
 
 
-    
+
 }
