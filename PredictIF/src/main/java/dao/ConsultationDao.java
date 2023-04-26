@@ -16,12 +16,19 @@ public class ConsultationDao {
         JpaUtil.obtenirContextePersistance().persist(consultation);
     }
 
-    // Permet de trouver une liste de consultations à partir de l'id du client passé en paramètre
     public List<Consultation> listerConsultationsRecentes(Client client){
         EntityManager em = JpaUtil.obtenirContextePersistance();
-        System.out.println(client);
-        TypedQuery<Consultation> query = em.createQuery("SELECT c from Consultation c where c.client = :client order by c.date desc ", Consultation.class);
-        query.setParameter("client",client);
-        return query.setMaxResults(5).getResultList();
+
+        String queryString = "SELECT c FROM Consultation c " +
+                            "WHERE c.client = :client "+
+                            "ORDER BY c.date, c.heure desc";
+
+        TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
+        query.setParameter("client" , client);
+
+        List<Consultation> top5 = query.setMaxResults(5).getResultList();
+
+        return top5;
     }
+
 }
