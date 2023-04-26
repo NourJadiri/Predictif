@@ -12,6 +12,7 @@ import metier.modele.Employe;
 import metier.modele.Medium;
 import util.Message;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,9 +22,9 @@ import java.util.logging.Logger;
  */
 
 public class Service {
-    
-    private String mail = "contact@predict.if"; 
-    
+
+    private final String mail = "contact@predict.if";
+
     public Service(){
         
     }
@@ -179,7 +180,7 @@ public class Service {
 
         try{
             JpaUtil.ouvrirTransaction();
-            mediumDAO.create(medium);
+            mediumDao.creer(medium);
             JpaUtil.validerTransaction();
             System.out.println(medium);
         }catch( Exception ex ){
@@ -191,9 +192,23 @@ public class Service {
 
     }
 
+    public List<Consultation> listerConsultationRecente(Client client){
+        JpaUtil.creerContextePersistance();
+        List<Consultation> c;
+        try {
+            c = consultationDAO.listerConsultationsRecentes(client);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return c;
+    }
+
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
-    protected ConsultationDAO consultationDAO = new ConsultationDAO();
+    protected ConsultationDao consultationDAO = new ConsultationDao();
 
-    protected MediumDAO mediumDAO = new MediumDAO();
+    protected MediumDao mediumDao = new MediumDao();
+
 }
