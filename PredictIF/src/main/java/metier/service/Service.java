@@ -130,8 +130,18 @@ public class Service {
         clients.add(client4);
         clients.add(client5);
 
+
         for(Client c : clients){
-            clientDao.create(c);
+            JpaUtil.creerContextePersistance();
+            try{
+                JpaUtil.ouvrirTransaction();
+                clientDao.create(c);
+                JpaUtil.validerTransaction();
+            }catch(Exception ex){
+                JpaUtil.annulerTransaction();
+            }finally{
+                JpaUtil.fermerContextePersistance();
+            }
         }
 
         return clients;
@@ -189,8 +199,18 @@ public class Service {
         employes.add(employe4);
         employes.add(employe5);
 
+
         for(Employe e : employes){
-            employeDao.create(e);
+            JpaUtil.creerContextePersistance();
+            try{
+                JpaUtil.ouvrirTransaction();
+                employeDao.create(e);
+                JpaUtil.validerTransaction();
+            }catch (Exception ex){
+                JpaUtil.annulerTransaction();
+            }finally{
+                JpaUtil.fermerContextePersistance();
+            }
         }
 
         return employes;
@@ -271,12 +291,28 @@ public class Service {
         return medium;
     }
 
+    public List<Medium> filtrerMediums(String genre , ArrayList<String> types){
+        List<Medium> resultat;
+
+        JpaUtil.creerContextePersistance();
+
+        try{
+            resultat = mediumDAO.filter(genre , types);
+        }catch(Exception ex){
+            resultat = null;
+        }finally{
+            JpaUtil.fermerContextePersistance();
+        }
+
+        return resultat;
+    }
+
     public List<Medium> initMediums(){
         ArrayList<Medium> mediums = new ArrayList<>();
 
         // Creating Astrologue
-        Astrologue astrologue1 = new Astrologue("Maxime Ganachaud", "H", "Basé à Lyon, Maxime Ganachaud est un des jeunes astrologues les plus talentueux de sa génération. Passionné depuis son plus jeune âge, il pratique exclusivement l’astrologie sidérale, qui offre selon lui une bien meilleure précision que l’astrologie dite « tropicale ». Ses prévisions sont ainsi très demandées en raison de leur grande justesse.", "Ecole Normale Supérieure", "2006");
-        Astrologue astrologue2 = new Astrologue("Alix Tair", "F", "Basée à Marseille, Alix Tair est une astrologue reconnue pour son approche à la fois pragmatique et spirituelle de l'astrologie. Elle pratique notamment l'astrologie chinoise et l'astrologie aztèque pour offrir une analyse approfondie et originale à ses clients.", "Université Paris Diderot", "2010");
+        Astrologue astrologue1 = new Astrologue("Maxime Ganachaud", "H", "Basé à Lyon, Maxime Ganachaud est un des jeunes astrologues les plus talentueux de sa génération. ", "Ecole Normale Supérieure", "2006");
+        Astrologue astrologue2 = new Astrologue("Alix Tair", "F", "Basée à Marseille, Alix Tair est une astrologue reconnue pour son approche à la fois pragmatique et spirituelle de l'astrologie. ", "Université Paris Diderot", "2010");
         Astrologue astrologue3 = new Astrologue("Sophie Rey", "F", "Sophie Rey est une astrologue humaniste et passionnée, basée à Toulouse. Elle pratique l'astrologie tropicale et met son expertise au service de ses clients pour leur permettre de mieux se comprendre et de mieux appréhender leur avenir.", "Institut Astrologique de Carthage", "2012");
 
         // Creating Cartomancien
@@ -301,7 +337,16 @@ public class Service {
 
 
         for (Medium m : mediums) {
-            mediumDAO.create(m);
+            JpaUtil.creerContextePersistance();
+            try{
+                JpaUtil.ouvrirTransaction();
+                mediumDAO.create(m);
+                JpaUtil.validerTransaction();
+            }catch (Exception ex){
+                JpaUtil.annulerTransaction();
+            }finally{
+                JpaUtil.fermerContextePersistance();
+            }
         }
 
         return mediums;
@@ -309,6 +354,6 @@ public class Service {
 
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
-    protected ConsultationDAO consultationDAO = new ConsultationDAO();
-    protected MediumDAO mediumDAO = new MediumDAO();
+    protected ConsultationDao consultationDAO = new ConsultationDao();
+    protected MediumDao mediumDAO = new MediumDao();
 }
