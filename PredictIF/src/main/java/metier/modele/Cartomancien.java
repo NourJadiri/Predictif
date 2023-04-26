@@ -12,19 +12,13 @@ import javax.persistence.Entity;
  * @author ghembise
  */
 @Entity
-public class Astrologue extends Medium{
-    
-    private String formation;
-    private String promotion;
+public class Cartomancien extends Medium{
 
-    public Astrologue(String denomination, String genre, String presentation , String formation, String promotion) {
+    public Cartomancien(String denomination, String genre, String presentation) {
         super(denomination, genre, presentation);
-        this.formation = formation;
-        this.promotion = promotion;
     }
 
-
-    public Astrologue() {
+    public Cartomancien() {
 
     }
 

@@ -28,8 +28,8 @@ public class Client {
     private String adressePostale;
     @Column(unique = true)
     private String mail;
-    private String numTel;
     private String motDePasse;
+    private String numTel;
     @Embedded
     private ProfilAstral profilAstral;
     
@@ -37,7 +37,7 @@ public class Client {
         
     }
 
-    public Client(String nom, String prenom, Date dateNaissance, String adressePostale, String mail, String numTel, String motDePasse) {
+    public Client(String nom, String prenom, Date dateNaissance, String adressePostale, String mail, String motDePasse, String numTel) {
         this.nom = nom;
         this.prenom = prenom;
         this.dateNaissance = dateNaissance;
