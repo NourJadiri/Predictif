@@ -5,6 +5,10 @@
  */
 package view;
 
+import java.util.*;
+
+import util.Saisie.java;
+
 import dao.JpaUtil;
 
 import metier.modele.*;
@@ -29,6 +33,8 @@ public class Main {
         //testerInscriptionEmploye();
         //testerAjoutConsultation();
         //testerAjoutMedium();
+        
+        testerSaisie();
 
         initDb();
         testerAjoutConsultation();
@@ -137,6 +143,63 @@ public class Main {
 
         // Ajout de la recherche des 5 consultations récentes
 
+    }
+    
+    public static void testerSaisie(){
+        System.out.println("Tapez 1 si vous etes un Client ou 2 si vous etes un Employe : ");
+        Scanner sc = new Scanner(System.in);
+        int choixInt = sc.nextInt();
+        if (choixInt == 1){
+            System.out.println("Tapez 1 si vous etes un ancien Client ou 2 si vous etes un nouveau Client : ");
+            int choixClient = sc.nextInt();
+            if (choixClient == 1){
+                System.out.println("Connecte toi");
+                System.out.println("Entrez votre username : ");
+                String username = sc.nextLine();
+                if (lireChaine(username) == null){
+                    System.out.println("Username incorrect lors de la saisie.");
+                }
+                else{
+                    System.out.println("Entrez votre mot de passe : ");
+                    String mdp = sc.nextLine();
+                    if (lireChaine(mdp) == null){
+                        System.out.println("Mot de passe incorrect lors de la saisie.");
+                    }
+                    else{
+                        System.out.println("Connexion réussi.");
+                        //Ajouter la méthode qui permet de connecter un Client ici
+                    }
+                }
+            }
+            else if (choixClient == 2){
+                System.out.println("Inscris toi : ");
+                System.out.println("Choisissez votre username : ");
+                String username = sc.nextLine();
+                if (lireChaine(username) == null){
+                    System.out.println("Username incorrect lors de la saisie.");
+                }
+                else{
+                    System.out.println("Choisissez votre mot de passe : ");
+                    String mdp = sc.nextLine();
+                    if (lireChaine(mdp) == null){
+                        System.out.println("Mot de passe incorrect lors de la saisie.");
+                    }
+                    else{
+                        System.out.println("Inscription réussi.");
+                    }
+                }
+            }
+            else{
+                System.out.println("Erreur, tapez 1 ou 2. Veuillez recommencer");
+            }
+        }
+        else if (choixInt == 2){
+            System.out.println("Connecte toi : ");
+            //pareil que la connexion client je le ferai plus tard
+        }
+        else{
+            System.out.println("Erreur, tapez 1 ou 2. Veuillez recommencer");
+        }
     }
 
 
