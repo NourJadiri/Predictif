@@ -16,29 +16,28 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author ghembise
  */
 
 public class Service {
-    
-    private String mail = "contact@predict.if"; 
-    
-    public Service(){
-        
+
+    private final String mail = "contact@predict.if";
+
+    public Service() {
+
     }
 
     /**
-     *  SECTION CLIENT
+     * SECTION CLIENT
      */
 
     // L'inscription du client retourne l'id du client inscrit
     public Long inscriptionClient(Client client) {
 
         // Message succès inscription
-        String msgSucces = "Bonjour " + client.getPrenom() + 
+        String msgSucces = "Bonjour " + client.getPrenom() +
                 " nous vous confirmons votre inscription au service PREDICT'IF. "
-                + "Rendez-vous vite sur notre site pour consulter votre profil astrologique et profiter des dons incroyables de nos médiums"; 
+                + "Rendez-vous vite sur notre site pour consulter votre profil astrologique et profiter des dons incroyables de nos médiums";
 
         // Message echec inscription
         String msgErreur = "Bonjour " + client.getPrenom() +
@@ -66,12 +65,12 @@ public class Service {
 
     // Retourne le client trouvé si l'id existe dans la base de donnée
     // Retourne nullObject sinon
-    public Client rechercherClientparId(Long id){
+    public Client rechercherClientparId(Long id) {
         Client resultat = null;
         JpaUtil.creerContextePersistance();
         try {
             resultat = clientDao.findById(id);
-        } catch (Exception e){
+        } catch (Exception e) {
             resultat = null;
         } finally {
             JpaUtil.fermerContextePersistance();
@@ -80,15 +79,15 @@ public class Service {
     }
 
     // Retourne le client authentifié grâce à son mail et son mot de passe
-    public Client authentifierClientmail(String mail, String MDP){
+    public Client authentifierClientmail(String mail, String MDP) {
         Client res = null;
         JpaUtil.creerContextePersistance();
         try {
             Client client = clientDao.findByMail(mail);
-            if(client != null && client.getMotDePasse().equals(MDP)){
-                res= client;
+            if (client != null && client.getMotDePasse().equals(MDP)) {
+                res = client;
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             res = null;
         } finally {
             JpaUtil.fermerContextePersistance();
@@ -97,15 +96,15 @@ public class Service {
     }
 
     // Permet d'authentifier un client à travers son ID et son MDP
-    public Client authentifierClientId(Long id, String MDP){
+    public Client authentifierClientId(Long id, String MDP) {
         Client res = null;
-         JpaUtil.creerContextePersistance();
+        JpaUtil.creerContextePersistance();
         try {
             Client client = clientDao.findById(id);
-            if(client != null && client.getMotDePasse().equals(MDP)){
+            if (client != null && client.getMotDePasse().equals(MDP)) {
                 res = client;
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             res = null;
         } finally {
             JpaUtil.fermerContextePersistance();
@@ -114,15 +113,15 @@ public class Service {
     }
 
     // Méthode utile pour éviter de retaper le code d'initialisation à la main
-    public List<Client> initClients(){
+    public List<Client> initClients() {
         List<Client> clients = new ArrayList<>();
 
         // Create 5 Client objects
-        Client client1 = new Client("John", "Doe", new Date(1990, 5, 1), "123 Main St", "johndoe@example.com", "555-1234", "password1");
-        Client client2 = new Client("Jane", "Smith", new Date(1985, 9, 15), "456 Oak St", "janesmith@example.com", "555-5678", "password2");
-        Client client3 = new Client("Alice", "Johnson", new Date(1995, 2, 28), "789 Elm St", "alicejohnson@example.com", "555-9012", "password3");
-        Client client4 = new Client("Bob", "Williams", new Date(1978, 11, 10), "12 Maple St", "bobwilliams@example.com", "555-3456", "password4");
-        Client client5 = new Client("Sarah", "Lee", new Date(1989, 7, 22), "34 Pine St", "sarahlee@example.com", "555-7890", "password5");
+        Client client1 = new Client("John", "Doe", new Date(1990, 5, 1), "123 Main St", "johndoe@example.com", "password1", "555-1234");
+        Client client2 = new Client("Jane", "Smith", new Date(1985, 9, 15), "456 Oak St", "janesmith@example.com", "password2", "555-5678");
+        Client client3 = new Client("Alice", "Johnson", new Date(1995, 2, 28), "789 Elm St", "alicejohnson@example.com", "password3", "555-9012");
+        Client client4 = new Client("Bob", "Williams", new Date(1978, 11, 10), "12 Maple St", "bobwilliams@example.com", "password4", "555-3456");
+        Client client5 = new Client("Sarah", "Lee", new Date(1989, 7, 22), "34 Pine St", "sarahlee@example.com", "password5", "555-7890");
 
         clients.add(client1);
         clients.add(client2);
@@ -130,15 +129,15 @@ public class Service {
         clients.add(client4);
         clients.add(client5);
 
-        for(Client c : clients){
+        for (Client c : clients) {
             JpaUtil.creerContextePersistance();
-            try{
+            try {
                 JpaUtil.ouvrirTransaction();
                 clientDao.create(c);
                 JpaUtil.validerTransaction();
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 JpaUtil.annulerTransaction();
-            }finally{
+            } finally {
                 JpaUtil.fermerContextePersistance();
             }
         }
@@ -147,14 +146,11 @@ public class Service {
     }
 
     /**
-     *
      * SECTION : EMPLOYE
-     *
      */
-    public void ajouterEmploye( Employe e ){
-        
+    public void ajouterEmploye(Employe e) {
+
         JpaUtil.creerContextePersistance();
-        
         try {
             JpaUtil.ouvrirTransaction();
             employeDao.create(e);
@@ -162,35 +158,34 @@ public class Service {
         } catch (Exception ex) {
             JpaUtil.annulerTransaction();
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally {
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
     }
 
-    public Employe rechercherEmploye ( Long employeId ){
+    public Employe rechercherEmploye(Long employeId) {
         JpaUtil.creerContextePersistance();
         Employe employe;
-        try{
+        try {
             employe = employeDao.findById(employeId);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             employe = null;
-        }finally {
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
 
         return employe;
     }
 
-    public List<Employe> initEmployes(){
+    public List<Employe> initEmployes() {
         ArrayList<Employe> employes = new ArrayList<>();
 
         // Create 5 Employe objects
-        Employe employe1 = new Employe("Smith", "John", 'M', "555-1234", "johnsmith@example.com", "password1");
+        Employe employe1 = new Employe("Smith", "John", 'H', "555-1234", "johnsmith@example.com", "password1");
         Employe employe2 = new Employe("Johnson", "Jane", 'F', "555-5678", "janejohnson@example.com", "password2");
-        Employe employe3 = new Employe("Williams", "Bob", 'M', "555-9012", "bobwilliams@example.com", "password3");
+        Employe employe3 = new Employe("Williams", "Bob", 'H', "555-9012", "bobwilliams@example.com", "password3");
         Employe employe4 = new Employe("Lee", "Sarah", 'F', "555-3456", "sarahlee@example.com", "password4");
-        Employe employe5 = new Employe("Davis", "Mike", 'M', "555-7890", "mikedavis@example.com", "password5");
+        Employe employe5 = new Employe("Davis", "Mike", 'H', "555-7890", "mikedavis@example.com", "password5");
 
         employes.add(employe1);
         employes.add(employe2);
@@ -198,15 +193,15 @@ public class Service {
         employes.add(employe4);
         employes.add(employe5);
 
-        for(Employe e : employes){
+        for (Employe e : employes) {
             JpaUtil.creerContextePersistance();
-            try{
+            try {
                 JpaUtil.ouvrirTransaction();
                 employeDao.create(e);
                 JpaUtil.validerTransaction();
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 JpaUtil.annulerTransaction();
-            }finally{
+            } finally {
                 JpaUtil.fermerContextePersistance();
             }
         }
@@ -218,94 +213,115 @@ public class Service {
      * SECTION : CONSULTATION
      */
 
-    public void ajouterConsultation(Consultation consultation){
+    public Employe trouverEmployeDispo(Medium m) {
+        /*JpaUtil.creerContextePersistance();
+        try {
 
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }*/
+        return employeDao.findById(2L);
+    }
+
+    public void ajouterConsultation(Consultation consultation) {
+        Employe employe = consultation.getEmploye();
+        Client client = consultation.getClient();
+        Medium medium = consultation.getMedium();
+        String msgClient = "Bonjour " + client.getPrenom();
+        String msgEmploye = "Bonjour " + employe.getPrenom() +
+                ". Consultation requise pour " + client.getPrenom() +
+                " " + client.getNom() + ". Médium à incarner : " + medium.getDenomination();
         JpaUtil.creerContextePersistance();
-        try{
+        try {
             JpaUtil.ouvrirTransaction();
             consultationDao.create(consultation);
+            Message.envoyerNotification(employe.getTelephone(), msgClient);
+            employeDao.UpdateDispotoIndisponible(employe);
+//                employe.setDispo(Employe.disponibilite.INDISPONIBLE); je sais pas si necessaire de changer l'objet
             JpaUtil.validerTransaction();
-        }
-        catch (Exception ex){
+
+        } catch (Exception ex) {
             JpaUtil.annulerTransaction();
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally{
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
     }
 
-    public List<Consultation> listerConsultationsRecente(Client client){
+    public List<Consultation> listerConsultationsRecente(Client client) {
 
         JpaUtil.creerContextePersistance();
 
         List<Consultation> top5;
 
-        try{
+        try {
             top5 = consultationDao.listerConsultationsRecentes(client);
-        }catch (Exception ex){
-            top5=null;
+        } catch (Exception ex) {
+            top5 = null;
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
 
         return top5;
     }
+
     /**
      * SECTION : MEDIUM
      */
 
-    public void ajouterMedium(Medium medium){
+    public void ajouterMedium(Medium medium) {
         JpaUtil.creerContextePersistance();
 
-        try{
+        try {
             JpaUtil.ouvrirTransaction();
             mediumDao.create(medium);
             JpaUtil.validerTransaction();
-        }catch( Exception ex ){
+        } catch (Exception ex) {
             JpaUtil.annulerTransaction();
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
 
     }
 
-    public Medium rechercherMediumParId(Long id){
+    public Medium rechercherMediumParId(Long id) {
         Medium medium;
 
         JpaUtil.creerContextePersistance();
 
-        try{
+        try {
             medium = mediumDao.findById(id);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             medium = null;
-            Logger.getLogger(Service.class.getName()).log(Level.SEVERE,null,ex);
-        }finally {
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
 
         return medium;
     }
 
-    public List<Medium> filtrerMediums(String genre , ArrayList<String> types){
+    public List<Medium> filtrerMediums(String genre, ArrayList<String> types) {
         List<Medium> resultat;
 
         JpaUtil.creerContextePersistance();
 
-        try{
-            resultat = mediumDao.filter(genre , types);
-        }catch(Exception ex){
+        try {
+            resultat = mediumDao.filter(genre, types);
+        } catch (Exception ex) {
             resultat = null;
-        }finally{
+        } finally {
             JpaUtil.fermerContextePersistance();
         }
 
         return resultat;
     }
 
-    public List<Medium> favouritesMediumsList(Client client){
+    public List<Medium> favouritesMediumsList(Client client) {
         List<Medium> mediumList;
         JpaUtil.creerContextePersistance();
         try {
@@ -315,9 +331,10 @@ public class Service {
         } finally {
             JpaUtil.fermerContextePersistance();
         }
-        return  mediumList;
+        return mediumList;
     }
-    public List<Medium> initMediums(){
+
+    public List<Medium> initMediums() {
         ArrayList<Medium> mediums = new ArrayList<>();
 
         // Creating Astrologue
@@ -348,13 +365,13 @@ public class Service {
 
         for (Medium m : mediums) {
             JpaUtil.creerContextePersistance();
-            try{
+            try {
                 JpaUtil.ouvrirTransaction();
                 mediumDao.create(m);
                 JpaUtil.validerTransaction();
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 JpaUtil.annulerTransaction();
-            }finally{
+            } finally {
                 JpaUtil.fermerContextePersistance();
             }
         }
@@ -364,6 +381,6 @@ public class Service {
 
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
-    protected ConsultationDao consultationDao= new ConsultationDao();
+    protected ConsultationDao consultationDao = new ConsultationDao();
     protected MediumDao mediumDao = new MediumDao();
 }

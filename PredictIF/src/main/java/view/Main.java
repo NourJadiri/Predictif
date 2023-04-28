@@ -7,19 +7,19 @@ package view;
 
 import java.util.*;
 
-import util.Saisie.java;
+import util.Saisie;
 
 import dao.JpaUtil;
 
 import metier.modele.*;
 import metier.service.Service;
 
+import javax.swing.plaf.synth.SynthUI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author ghembise mneljadiri cdjouadi
  */
 public class Main {
@@ -27,33 +27,33 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         JpaUtil.creerFabriquePersistance();
         //testerInscriptionClient();
         //testerInscriptionEmploye();
         //testerAjoutConsultation();
         //testerAjoutMedium();
-        
-        testerSaisie();
+
 
         initDb();
+        //testerSaisie();
         testerAjoutConsultation();
-       JpaUtil.fermerFabriquePersistance();
+        JpaUtil.fermerFabriquePersistance();
     }
 
-    public static void initDb(){
+    public static void initDb() {
         Service sc = new Service();
         sc.initEmployes();
         sc.initClients();
         sc.initMediums();
     }
 
-    public static void testerInscriptionClient(){
-       Client ada = new Client("Lovelace", "Ada", new java.util.Date(System.currentTimeMillis()),"130 Avenue Albert Einstein","ada.lovelace@insa-lyon.fr","0669696969", "LAda");
-       Service sc = new Service();
+    public static void testerInscriptionClient() {
+        Client ada = new Client("Lovelace", "Ada", new java.util.Date(System.currentTimeMillis()), "130 Avenue Albert Einstein", "ada.lovelace@insa-lyon.fr", "0669696969", "LAda");
+        Service sc = new Service();
         for (int i = 0; i < 2; i++) {
             Long id = sc.inscriptionClient(ada);
-            if(id != null){
+            if (id != null) {
                 System.out.println("> Succès inscription");
             } else {
                 System.out.println("> Echec inscription");
@@ -62,7 +62,7 @@ public class Main {
     }
 
 
-    public static void testerAjoutMedium(){
+    public static void testerAjoutMedium() {
 
         System.out.println("TEST AJOUT MEDIUM");
         System.out.println("-----------------");
@@ -72,17 +72,17 @@ public class Main {
         sc.initMediums();
     }
 
-    public static void testerFiltrageGenre(){
+    public static void testerFiltrageGenre() {
         Service sc = new Service();
 
-        List<Medium> mediums = sc.filtrerMediums("F",new ArrayList<>());
+        List<Medium> mediums = sc.filtrerMediums("F", new ArrayList<>());
 
-        for(Medium m : mediums){
+        for (Medium m : mediums) {
             System.out.println(m);
         }
     }
 
-    public static void testerFiltrageType(){
+    public static void testerFiltrageType() {
         Service sc = new Service();
         ArrayList<String> types = new ArrayList<>();
         types.add("Astrologue");
@@ -90,7 +90,7 @@ public class Main {
 
         List<Medium> mediums = sc.filtrerMediums("M", types);
 
-        for(Medium m : mediums){
+        for (Medium m : mediums) {
             System.out.println(m);
         }
     }
@@ -102,9 +102,10 @@ public class Main {
         List<Consultation> consultations = new ArrayList<>();
 
         Employe employe1 = sc.rechercherEmploye(1L);
+        Employe employe2 = sc.rechercherEmploye(2L);
+
         Client client1 = sc.rechercherClientparId(6L);
         Medium medium1 = sc.rechercherMediumParId(13L);
-
         Medium medium2 = sc.rechercherMediumParId(14L);
 
         // Create the first consultation
@@ -112,7 +113,7 @@ public class Main {
         consultations.add(consultation1);
 
         // Create the second consultation
-        Consultation consultation2 = new Consultation(new Date(), new Date(), employe1, client1, medium1, "bonjour");
+        Consultation consultation2 = new Consultation(new Date(), new Date(), employe2, client1, medium1, "bonjour");
         consultations.add(consultation2);
 
         // Create the thrid consultation
@@ -120,7 +121,7 @@ public class Main {
         consultations.add(consultation3);
 
         // Persisting all consultation objects
-        for(Consultation consultation : consultations){
+        for (Consultation consultation : consultations) {
             sc.ajouterConsultation(consultation);
         }
 
@@ -128,7 +129,7 @@ public class Main {
         System.out.println(sc.favouritesMediumsList(client1));
     }
 
-    public static void testerConsultationsRecentes(){
+    public static void testerConsultationsRecentes() {
         Service sc = new Service();
 
         List<Client> clients = sc.initClients();
@@ -136,74 +137,51 @@ public class Main {
         List<Medium> mediums = sc.initMediums();
         List<Consultation> consultations = new ArrayList<>();
 
-        for (int i = 0 ; i < 5 ; i++){
-            consultations.add( new Consultation(new Date() , new Date() , employes.get(i) , clients.get(i) , mediums.get(i) , "commentaire " + i));
+        for (int i = 0; i < 5; i++) {
+            consultations.add(new Consultation(new Date(), new Date(), employes.get(i), clients.get(i), mediums.get(i), "commentaire " + i));
             sc.ajouterConsultation(consultations.get(i));
         }
 
         // Ajout de la recherche des 5 consultations récentes
 
     }
-    
-    public static void testerSaisie(){
-        System.out.println("Tapez 1 si vous etes un Client ou 2 si vous etes un Employe : ");
-        Scanner sc = new Scanner(System.in);
-        int choixInt = sc.nextInt();
-        if (choixInt == 1){
-            System.out.println("Tapez 1 si vous etes un ancien Client ou 2 si vous etes un nouveau Client : ");
-            int choixClient = sc.nextInt();
-            if (choixClient == 1){
-                System.out.println("Connecte toi");
-                System.out.println("Entrez votre username : ");
-                String username = sc.nextLine();
-                if (lireChaine(username) == null){
-                    System.out.println("Username incorrect lors de la saisie.");
-                }
-                else{
-                    System.out.println("Entrez votre mot de passe : ");
-                    String mdp = sc.nextLine();
-                    if (lireChaine(mdp) == null){
+
+    public static void testerSaisie() {
+        List<Integer> choix = new ArrayList<Integer>() {{
+            add(1);
+            add(2);
+        }};
+        Service sc = new Service();
+        int choixInt = Saisie.lireInteger("Tapez 1 si vous etes un Client ou 2 si vous etes un Employe : ", choix);
+        if (choixInt == 1) {
+            int choixClient = Saisie.lireInteger("Tapez 1 si vous etes un ancien Client ou 2 si vous etes un nouveau Client : ", choix);
+            if (choixClient == 1) {
+                System.out.println("Connexion");
+                String mail = Saisie.lireChaine("Entrez votre adresse mail : ");
+                String mdp = Saisie.lireChaine("Entrez votre mot de passe : ");
+                Client client = sc.authentifierClientmail(mail, mdp);
+                System.out.println("Bonjour " + client.getPrenom() + " " + client.getNom());
+            } else if (choixClient == 2) {
+                System.out.println("Inscription : ");
+                String nom = Saisie.lireChaine("Choisissez votre nom d'utilisateur : ");
+                if (nom.equals("")) {
+                    System.out.println("nom d'utilisateur incorrect lors de la saisie.");
+                } else {
+                    String mdp = Saisie.lireChaine("Choisissez votre mot de passe : ");
+                    if (mdp.equals("")) {
                         System.out.println("Mot de passe incorrect lors de la saisie.");
-                    }
-                    else{
-                        System.out.println("Connexion réussi.");
-                        //Ajouter la méthode qui permet de connecter un Client ici
-                    }
-                }
-            }
-            else if (choixClient == 2){
-                System.out.println("Inscris toi : ");
-                System.out.println("Choisissez votre username : ");
-                String username = sc.nextLine();
-                if (lireChaine(username) == null){
-                    System.out.println("Username incorrect lors de la saisie.");
-                }
-                else{
-                    System.out.println("Choisissez votre mot de passe : ");
-                    String mdp = sc.nextLine();
-                    if (lireChaine(mdp) == null){
-                        System.out.println("Mot de passe incorrect lors de la saisie.");
-                    }
-                    else{
+                    } else {
+                        /*                        sc.inscriptionClient(new Client(nom)); faut dautre info pour creer un client sois le
+                         * mettre en dur soit refaire la meme chose quavec le mot de passe et le nom (simuler entierement le formulaire d'inscription*/
                         System.out.println("Inscription réussi.");
                     }
                 }
             }
-            else{
-                System.out.println("Erreur, tapez 1 ou 2. Veuillez recommencer");
-            }
-        }
-        else if (choixInt == 2){
-            System.out.println("Connecte toi : ");
+        } else if (choixInt == 2) {
+            System.out.println("Connexion : ");
             //pareil que la connexion client je le ferai plus tard
-        }
-        else{
-            System.out.println("Erreur, tapez 1 ou 2. Veuillez recommencer");
+        } else {
+
         }
     }
-
-
-
-
-
 }

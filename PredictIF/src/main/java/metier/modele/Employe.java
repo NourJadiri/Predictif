@@ -13,13 +13,13 @@ import javax.persistence.*;
  *
  * @author ghembise
  */
-enum disponibilite{
-    DISPONIBLE , DECONNECTE, OCCUPE
-}
 
 @Entity
 public class Employe implements Serializable {
-    
+    public enum disponibilite{
+        DISPONIBLE , INDISPONIBLE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)     
     Long id;
@@ -115,8 +115,5 @@ public class Employe implements Serializable {
     public String toString() {
         return "Employe{" + "id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", genre=" + genre + ", telephone=" + telephone + ", email=" + email + ", motDePasse=" + motDePasse + ", dispo=" + dispo + '}';
     }
-    
-    
-    
     
 }
