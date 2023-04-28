@@ -42,10 +42,14 @@ public class EmployeDao {
     public void UpdateDispotoIndisponible(Employe e) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
-        String queryString = "UPDATE Employe SET dispo = disponibilite.INDISPONIBLE WHERE id = :EmployeId";
+        String queryString = "UPDATE Employe SET dispo = :dispoemploye " +
+                "WHERE id = :employeId";
+
 
         TypedQuery<Employe> query = em.createQuery(queryString, Employe.class);
-        query.setParameter("EmployeId", e.getId());
+        query.setParameter("dispoemploye", e.getDispo());
+        query.setParameter("employeId", e.getId());
+        query.executeUpdate();
     }
 
 }

@@ -238,8 +238,8 @@ public class Service {
             JpaUtil.ouvrirTransaction();
             consultationDao.create(consultation);
             Message.envoyerNotification(employe.getTelephone(), msgClient);
+            employe.setDispo(Employe.disponibilite.INDISPONIBLE);
             employeDao.UpdateDispotoIndisponible(employe);
-//                employe.setDispo(Employe.disponibilite.INDISPONIBLE); je sais pas si necessaire de changer l'objet
             JpaUtil.validerTransaction();
 
         } catch (Exception ex) {

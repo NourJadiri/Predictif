@@ -30,6 +30,7 @@ public class Employe implements Serializable {
     private String telephone;
     private String email;
     private String motDePasse;
+    @Enumerated(EnumType.ORDINAL)
     private disponibilite dispo;
 
 
