@@ -278,7 +278,7 @@ public class Service {
     }
     catch (Exception e) {
         e.printStackTrace();
-       //* throw new ErrorInspiration();
+        prediction = null;
     }
     finally {
         return prediction;
