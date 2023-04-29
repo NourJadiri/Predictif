@@ -210,6 +210,13 @@ public class Service {
 
         return employes;
     }
+    
+    public Map<Employe, Long> afficherRepartitionClientParEmploye() {
+        JpaUtil.creerContextePersistance();
+        final Map<Employe, Long> repartitionClient = (Map<Employe, Long>)this.employeDao.nombreDeClientsParEmploye(); //manque  nombreDeClientsParEmploye()
+        JpaUtil.fermerContextePersistance();
+        return repartitionClient;
+}//il faudra implementer la transaction dans la DAO
 
     /**
      * SECTION : CONSULTATION
@@ -270,20 +277,44 @@ public class Service {
         return top5;
     }
     
+    public void finConsultation(Consultation consultation, final String commentaire) {
+        try {
+            if (commentaire == null) {
+                throw new CommentaireNotFoundException();
+            }
+            JpaUtil.creerContextePersistance();
+            consultation.setCommentaire(commentaire);
+            consultation.setDateFin(new Date());
+        //consult.setOccupe(false);
+            Employe disponible = consultation.getEmploye();
+        //disponible.setDisponible(true);
+            JpaUtil.ouvrirTransaction();
+            consult = this.consultationDao.update(consultation);
+            dispo = this.employeDao.update(disponible);
+            JpaUtil.validerTransaction();
+        }
+        catch (Exception e) {
+            JpaUtil.annulerTransaction();
+        }
+        finally {
+            JpaUtil.fermerContextePersistance();
+        }
+    }
+    
     public List<String> getInspiration(final String couleur, final String animal, final int amour, final int sante, final int travail) {
-    final AstroNetApi inspiration = new AstroNetApi();
-    final ArrayList<String> prediction = new ArrayList<String>();
-    try {
-        prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail)); //*voir si j'ai bien les bon import pour utiliser la méthode addall
+        final AstroNetApi inspiration = new AstroNetApi();
+        final ArrayList<String> prediction = new ArrayList<String>();
+        try {
+            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail)); //*voir si j'ai bien les bon import pour utiliser la méthode addall
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            prediction = null;
+        }
+        finally {
+            return prediction;
+        }
     }
-    catch (Exception e) {
-        e.printStackTrace();
-        prediction = null;
-    }
-    finally {
-        return prediction;
-    }
-}
 
     /**
      * SECTION : MEDIUM
