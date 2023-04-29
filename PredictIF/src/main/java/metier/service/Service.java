@@ -274,7 +274,7 @@ public class Service {
     final AstroNetApi inspiration = new AstroNetApi();
     final ArrayList<String> prediction = new ArrayList<String>();
     try {
-        prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail));
+        prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail)); //*voir si j'ai bien les bon import pour utiliser la méthode addall
     }
     catch (Exception e) {
         e.printStackTrace();
