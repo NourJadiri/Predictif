@@ -277,10 +277,10 @@ public class Service {
         return top5;
     }
     
-    public void finConsultation(Consultation consultation, final String commentaire) {
+    public void finConsultation(Consultation consultation, final String commentaire) throws ErrorCommentaireNull {
         try {
             if (commentaire == null) {
-                throw new CommentaireNotFoundException();
+                throw new ErrorComentaireNull();
             }
             JpaUtil.creerContextePersistance();
             consultation.setCommentaire(commentaire);
@@ -293,7 +293,10 @@ public class Service {
             dispo = this.employeDao.update(disponible);
             JpaUtil.validerTransaction();
         }
-        catch (Exception e) {
+         catch (ErrorCommentaireNull e1) {
+            throw new ErrorCommentaireNull();
+        }
+        catch (Exception e2) {
             JpaUtil.annulerTransaction();
         }
         finally {
