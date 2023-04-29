@@ -270,7 +270,7 @@ public class Service {
         return top5;
     }
     
-    public List<String> getInspiration(final String couleur, final String animal, final int amour, final int sante, final int travail) throws IOException, ErrorInspiration {
+    public List<String> getInspiration(final String couleur, final String animal, final int amour, final int sante, final int travail) {
     final AstroNetApi inspiration = new AstroNetApi();
     final ArrayList<String> prediction = new ArrayList<String>();
     try {
@@ -278,7 +278,7 @@ public class Service {
     }
     catch (Exception e) {
         e.printStackTrace();
-        throw new ErrorInspiration();
+       //* throw new ErrorInspiration();
     }
     finally {
         return prediction;
