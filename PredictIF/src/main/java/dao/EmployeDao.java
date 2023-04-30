@@ -68,6 +68,36 @@ public class EmployeDao {
         }
         return res;
     }
-}
+    
+    public Employee rqEmployeDisponible( Medium med) {
+        final String s = "select e from employe where disponibilite = disponible and genre = med.genre";
+        final TypedQuery queryDispo = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
+        queryDispo.setParameter("médium", med);
+    }
+        final List<Employe> liste = null;
+        try{
+            liste = queryDispo.getResultList();
+        }catch(Exception e){
+            liste = null;
+        }
+        final Long minConsultation = 1000000L;
+        final Employe emp = null;
+        for (int i = 0; i < liste.size(); i++){
+            s = "select COUNT(DISTINCT consultation) as nombreDeConsultationParEmploye  from Consultation c where c.Employe = :employe"; //je crois j'ai mélangé des trucs dans la requete help me
+            final query = JpaUtil.obtenirContextePersistance().createQuery(s, Consultation.class);
+            query.setParameter("employe", liste.get(i));
+            final Long nbConsultation = 0L;
+            try{
+                nbConsultation = (Long) query.getSingleResult();
+            }catch(Exception e){
+                nbConsultation = 0L;
+            }
+            if (nbConsultation < minConsultation){
+                minConsultation = nbConsultation;
+                emp = liste.get(i);
+            }
+        }
+        return emp;
+      }
 
 }
