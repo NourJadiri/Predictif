@@ -213,9 +213,9 @@ public class Service {
     
     public Map<Employe, Long> afficherRepartitionClientParEmploye() {
         JpaUtil.creerContextePersistance();
-        final Map<Employe, Long> repartitionClient = (Map<Employe, Long>)this.employeDao.nombreDeClientsParEmploye(); 
+        final Map<Employe, Long> repartitionClientParEmp = (Map<Employe, Long>)this.employeDao.nombreDeClientsParEmploye(); 
         JpaUtil.fermerContextePersistance();
-        return repartitionClient;
+        return repartitionClientParEmp;
     }
 
     /**
@@ -277,7 +277,7 @@ public class Service {
         return top5;
     }
     
-    public void finConsultation(Consultation consultation, final String commentaire) throws ErrorCommentaireNull {
+    public void finConsultation(Consultation consultation, final String commentaire) throws ErrorCommentaireNull { //pas sûre de ma gestion d'exception please verif
         try {
             if (commentaire == null) {
                 throw new ErrorComentaireNull();
@@ -285,7 +285,7 @@ public class Service {
             JpaUtil.creerContextePersistance();
             consultation.setCommentaire(commentaire);
             consultation.setDateFin(new Date());
-        //consult.setOccupe(false);
+        //consultation.setOccupe(false);
             Employe disponible = consultation.getEmploye();
         //disponible.setDisponible(true);
             JpaUtil.ouvrirTransaction();
@@ -302,13 +302,13 @@ public class Service {
         finally {
             JpaUtil.fermerContextePersistance();
         }
-    }
+    } // à voir si on code setOccupe et setDisponible
     
     public List<String> getInspiration(final String couleur, final String animal, final int amour, final int sante, final int travail) {
         final AstroNetApi inspiration = new AstroNetApi();
         final ArrayList<String> prediction = new ArrayList<String>();
         try {
-            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail)); //*voir si j'ai bien les bon import pour utiliser la méthode addall
+            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail)); //voir si j'ai bien les bon import pour utiliser la méthode addall please
         }
         catch (Exception e) {
             e.printStackTrace();
