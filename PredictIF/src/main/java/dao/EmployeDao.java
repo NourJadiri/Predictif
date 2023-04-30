@@ -5,11 +5,13 @@
  */
 package dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import metier.modele.Employe;
+
 
 /**
  * @author ghembise
@@ -39,7 +41,7 @@ public class EmployeDao {
         return result;
     }
 
-    public void UpdateDispotoIndisponible(Employe e) {
+    public void updateDispotoIndispo(Employe e) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         String queryString = "UPDATE Employe SET dispo = :dispoemploye " +
@@ -52,52 +54,57 @@ public class EmployeDao {
         query.executeUpdate();
     }
     
-    public Map<Employe, Long> nombreDeClientsParEmploye() {
-        final String queryEmployeWithClients = "SELECT employe , COUNT(DISTINCT client) as nombreDeClientsParEmploye FROM consultation c where c.employe = :employe "; //Consultation avec C majuscule ou pas ???
-        final String queryEmployeWithoutClients = "SELECT employe, 0 as nombreDeClientsParEmploye FROM Employe WHERE NOT EXISTS ( SELECT c FROM consultation c WHERE c.employe = :employe )"; //pas sure de cette requete a partir du where not exist
-        final TypedQuery queryWithClients = JpaUtil.obtenirContextePersistance().createQuery(queryEmployeWithClients, (Class)Employe.class);
-        final TypedQuery queryWithoutClients = JpaUtil.obtenirContextePersistance().createQuery(queryEmployeWithoutClients, (Class)Employe.class);
-        final List<Object[]> resultatWithClients = (List<Object[]>)queryWithClients.getResultList();
-        final List<Object[]> resultatWithoutClients = (List<Object[]>)queryWithoutClients.getResultList();
-        final Map<Employe, Long> res = new HashMap<Employe, Long>();
-        for (final Object[] entree : resWithClients) {
-            res.put((Employe)entree[0], (Long)entree[1]);
+    public Map<Employe, Integer> sortEmployeByClientNumber(){
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "SELECT c.employe as employe, count(c) as nb_client " +
+                "FROM Consultation c " +
+                "GROUP BY c.employe ORDER BY nb_client desc";
+        TypedQuery<Object[]> query = em.createQuery(queryString, Object[].class);
+
+        List<Object[]> resultList = query.getResultList();
+        Map<Employe,Integer> consultationNumberPerEmployee = new HashMap<>();
+
+        for (Object[] objects : resultList ){
+            Employe e = (Employe) objects[0];
+            Integer nbConsultation = (Integer) objects[1];
+
+            consultationNumberPerEmployee.put(e,nbConsultation);
         }
-        for (final Object[] entree : resWithoutClients) {
-            res.put((Employe)entree[0], 0L);
-        }
-        return res;
+
+        return consultationNumberPerEmployee;
     }
     
-    public Employee rqEmployeDisponible( Medium med) {
-        final String s = "select e from employe where disponibilite = disponible and genre = med.genre";
-        final TypedQuery queryDispo = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
-        queryDispo.setParameter("médium", med);
-    }
-        final List<Employe> liste = null;
-        try{
-            liste = queryDispo.getResultList();
-        }catch(Exception e){
-            liste = null;
-        }
-        final Long minConsultation = 1000000L;
-        final Employe emp = null;
-        for (int i = 0; i < liste.size(); i++){
-            s = "select COUNT(DISTINCT consultation) as nombreDeConsultationParEmploye  from Consultation c where c.Employe = :employe"; //je crois j'ai mélangé des trucs dans la requete help me
-            final query = JpaUtil.obtenirContextePersistance().createQuery(s, Consultation.class);
-            query.setParameter("employe", liste.get(i));
-            final Long nbConsultation = 0L;
+    /*
+        public Employe rqEmployeDisponible( Medium med ) {
+            final String s = "select e from employe e where e.dispo != 0 and e.genre = :med.genre";
+            final TypedQuery queryDispo = JpaUtil.obtenirContextePersistance().createQuery(s, Employe.class);
+            queryDispo.setParameter("medium", med);
+            final List<Employe> liste = null;
             try{
-                nbConsultation = (Long) query.getSingleResult();
+                liste = queryDispo.getResultList();
             }catch(Exception e){
-                nbConsultation = 0L;
+                liste = null;
             }
-            if (nbConsultation < minConsultation){
-                minConsultation = nbConsultation;
-                emp = liste.get(i);
+            final Long minConsultation = 1000000L;
+            final Employe emp = null;
+            for (int i = 0; i < liste.size(); i++){
+                s = "select COUNT(DISTINCT consultation) as nombreDeConsultationParEmploye  from Consultation c where c.Employe = :employe"; //je crois j'ai mélangé des trucs dans la requete help me
+                final String query = JpaUtil.obtenirContextePersistance().createQuery(s, Consultation.class);
+                query.setParameter("employe", liste.get(i));
+                final Long nbConsultation = 0L;
+                try{
+                    nbConsultation = (Long) query.getSingleResult();
+                }catch(Exception e){
+                    nbConsultation = 0L;
+                }
+                if (nbConsultation < minConsultation){
+                    minConsultation = nbConsultation;
+                    emp = liste.get(i);
+                }
             }
-        }
-        return emp;
-      }
+            return emp;
+          }
+    */
 
 }

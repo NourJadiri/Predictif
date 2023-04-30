@@ -7,15 +7,18 @@ package metier.service;
 
 import dao.*;
 import metier.modele.*;
+import util.AstroNetApi;
 import util.Message;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import java.util.AstroNetApi;
+
 
 /**
  * @author ghembise
@@ -210,13 +213,21 @@ public class Service {
 
         return employes;
     }
+
+    public Map<Employe, Integer> afficherRepartitionClientParEmploye(){
+        JpaUtil.creerContextePersistance();
+
+        Map<Employe, Integer> classementConsultations = employeDao.sortEmployeByClientNumber();
+
+        return classementConsultations;
+    }
     
-    public Map<Employe, Long> afficherRepartitionClientParEmploye() {
+/*    public Map<Employe, Long> afficherRepartitionClientParEmploye() {
         JpaUtil.creerContextePersistance();
         final Map<Employe, Long> repartitionClientParEmp = (Map<Employe, Long>)this.employeDao.nombreDeClientsParEmploye(); 
         JpaUtil.fermerContextePersistance();
         return repartitionClientParEmp;
-    }
+    }*/
 
     /**
      * SECTION : CONSULTATION
@@ -234,7 +245,7 @@ public class Service {
         return employeDao.findById(2L);
     } */
     
-    public Employe trouverEmployeDispo(Medium m) {
+/*    public Employe trouverEmployeDispo(Medium m) {
         JpaUtil.creerContextePersistance();
         EmployeDao emp = new EmployeDao();
         Employe employeDispo = emp.rqEmployeDisponible(m);
@@ -246,7 +257,7 @@ public class Service {
             JpaUtil.fermerContextePersistance();
         }
         return employeDispo; 
-    }
+    }*/
 
     public void ajouterConsultation(Consultation consultation) {
         Employe employe = consultation.getEmploye();
@@ -262,7 +273,7 @@ public class Service {
             consultationDao.create(consultation);
             Message.envoyerNotification(employe.getTelephone(), msgClient);
             employe.setDispo(Employe.disponibilite.INDISPONIBLE);
-            employeDao.UpdateDispotoIndisponible(employe);
+            employeDao.updateDispotoIndispo(employe);
             JpaUtil.validerTransaction();
 
         } catch (Exception ex) {
@@ -291,7 +302,7 @@ public class Service {
         return top5;
     }
     
-    public void finConsultation(Consultation consultation, final String commentaire) throws ErrorCommentaireNull { //pas sûre de ma gestion d'exception please verif
+    /*public void finConsultation(Consultation consultation, final String commentaire) throws ErrorCommentaireNull { //pas sûre de ma gestion d'exception please verif
         try {
             if (commentaire == null) {
                 throw new ErrorComentaireNull();
@@ -316,21 +327,18 @@ public class Service {
         finally {
             JpaUtil.fermerContextePersistance();
         }
-    } // à voir si on code setOccupe et setDisponible
+    } // à voir si on code setOccupe et setDisponible*/
     
-    public List<String> getInspiration(final String couleur, final String animal, final int amour, final int sante, final int travail) {
-        final AstroNetApi inspiration = new AstroNetApi();
-        final ArrayList<String> prediction = new ArrayList<String>();
+    public List<String> demanderPrediction(String couleur, String animal, int amour, int sante, int travail) {
+        AstroNetApi inspiration = new AstroNetApi();
+        ArrayList<String> prediction = new ArrayList<>();
         try {
-            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail)); //voir si j'ai bien les bon import pour utiliser la méthode addall please
+            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail));
         }
         catch (Exception e) {
             e.printStackTrace();
-            prediction = null;
         }
-        finally {
-            return prediction;
-        }
+        return prediction;
     }
 
     /**

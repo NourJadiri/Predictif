@@ -37,8 +37,20 @@ public class Main {
 
         initDb();
         //testerSaisie();
-        testerAjoutConsultation();
+        //testerAjoutConsultation();
+        //getPredction();
+        testerAfficherRepartitionClient();
         JpaUtil.fermerFabriquePersistance();
+    }
+
+    public static void testerAfficherRepartitionClient(){
+        Service sc = new Service();
+        System.out.println(sc.afficherRepartitionClientParEmploye());
+    }
+    public static void getPredction(){
+        Service sc = new Service();
+
+        System.out.println(sc.demanderPrediction("Jaune", "Chien", 2, 3 ,4));
     }
 
     public static void initDb() {

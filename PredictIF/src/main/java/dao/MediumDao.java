@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MediumDao {
     public void create(Medium medium){
@@ -39,6 +40,7 @@ public class MediumDao {
         }
 
         // filtre par type de médium
+        // Si la liste est vide, on ne prend même pas le temps de filtrer par type
         if(!types.isEmpty()){
             for (int i = 0 ; i < types.size() ; i++) {
                 mediumTypeFilter = mediumTypeFilter + " m.type_medium = \"" + types.get(i) + "\" ";
