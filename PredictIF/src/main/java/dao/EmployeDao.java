@@ -51,5 +51,23 @@ public class EmployeDao {
         query.setParameter("employeId", e.getId());
         query.executeUpdate();
     }
+    
+    public Map<Employe, Long> nombreDeClientsParEmploye() {
+        final String queryEmployeWithClients = "SELECT employe , COUNT(DISTINCT client) as nombreDeClientsParEmploye FROM consultation c where c.employe = :employe "; //Consultation avec C majuscule ou pas ???
+        final String queryEmployeWithoutClients = "SELECT employe, 0 as nombreDeClientsParEmploye FROM Employe WHERE NOT EXISTS ( SELECT c FROM consultation c WHERE c.employe = :employe )"; //pas sure de cette requete a partir du where not exist
+        final TypedQuery queryWithClients = JpaUtil.obtenirContextePersistance().createQuery(queryEmployeWithClients, (Class)Employe.class);
+        final TypedQuery queryWithoutClients = JpaUtil.obtenirContextePersistance().createQuery(queryEmployeWithoutClients, (Class)Employe.class);
+        final List<Object[]> resultatWithClients = (List<Object[]>)queryWithClients.getResultList();
+        final List<Object[]> resultatWithoutClients = (List<Object[]>)queryWithoutClients.getResultList();
+        final Map<Employe, Long> res = new HashMap<Employe, Long>();
+        for (final Object[] entree : resWithClients) {
+            res.put((Employe)entree[0], (Long)entree[1]);
+        }
+        for (final Object[] entree : resWithoutClients) {
+            res.put((Employe)entree[0], 0L);
+        }
+        return res;
+    }
+}
 
 }
