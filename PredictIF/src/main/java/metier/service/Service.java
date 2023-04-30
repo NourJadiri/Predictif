@@ -222,16 +222,30 @@ public class Service {
      * SECTION : CONSULTATION
      */
 
-    public Employe trouverEmployeDispo(Medium m) {
-        /*JpaUtil.creerContextePersistance();
+    /*public Employe trouverEmployeDispo(Medium m) {
+        JpaUtil.creerContextePersistance();
         try {
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             JpaUtil.fermerContextePersistance();
-        }*/
+        }
         return employeDao.findById(2L);
+    } */
+    
+    public Employe trouverEmployeDispo(Medium m) {
+        JpaUtil.creerContextePersistance();
+        EmployeDao emp = new EmployeDao();
+        Employe employeDispo = emp.rqEmployeDisponible(m);
+        try {
+            employeDispo= employeDao.findById(2L);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return employeDispo; 
     }
 
     public void ajouterConsultation(Consultation consultation) {
