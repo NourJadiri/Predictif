@@ -213,10 +213,10 @@ public class Service {
     
     public Map<Employe, Long> afficherRepartitionClientParEmploye() {
         JpaUtil.creerContextePersistance();
-        final Map<Employe, Long> repartitionClient = (Map<Employe, Long>)this.employeDao.nombreDeClientsParEmploye(); //manque  nombreDeClientsParEmploye()
+        final Map<Employe, Long> repartitionClient = (Map<Employe, Long>)this.employeDao.nombreDeClientsParEmploye(); 
         JpaUtil.fermerContextePersistance();
         return repartitionClient;
-}//il faudra implementer la transaction dans la DAO
+    }
 
     /**
      * SECTION : CONSULTATION
