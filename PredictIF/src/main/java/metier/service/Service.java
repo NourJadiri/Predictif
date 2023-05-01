@@ -10,7 +10,6 @@ import metier.modele.*;
 import util.AstroNetApi;
 import util.Message;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +48,7 @@ public class Service {
                 " votre inscription au service PREDICT'IF a malencontreusement échoué... Merci de recommencer ultérieurement";
 
         // Variable de retour
-        Long res = null;
+        Long res;
         JpaUtil.creerContextePersistance();
 
         try {
@@ -153,6 +152,8 @@ public class Service {
     /**
      * SECTION : EMPLOYE
      */
+
+    //Ne sert pas dans notre cas car employe directement dans la base
     public void ajouterEmploye(Employe e) {
 
         JpaUtil.creerContextePersistance();
@@ -223,12 +224,12 @@ public class Service {
     /**
      * SECTION : CONSULTATION
      */
-
+    //Le client demande une Consultation avec un medium cela va chercher un employe disponible pour creer une consultation.
     public Consultation demanderConsultation(Client client, Medium medium) {
         JpaUtil.creerContextePersistance();
         Employe employe = employeDao.chercherEmployeDisponible(medium);
         JpaUtil.fermerContextePersistance();
-        return new Consultation(new Date(), new Date(), employe, client, medium);
+        return new Consultation(new Date(), new Date(), employe, client, medium); // la consultation n'a pas encore été accepté par l'employe mais on inittialise une consultation
     }
 
     public void accepterConsultation(Consultation consultation) {
@@ -238,7 +239,7 @@ public class Service {
             JpaUtil.ouvrirTransaction();
             consultationDao.create(consultation);
             employe.setDispo(Employe.disponibilite.INDISPONIBLE);
-            employeDao.updateDispotoIndispo(employe);
+            employeDao.updateDisponibilite(employe);
             JpaUtil.validerTransaction();
 
         } catch (Exception ex) {
@@ -267,32 +268,25 @@ public class Service {
         return top5;
     }
     
-    /*public void finConsultation(Consultation consultation, final String commentaire) throws ErrorCommentaireNull { //pas sûre de ma gestion d'exception please verif
+    public void finConsultation(Consultation consultation, final String commentaire) {
         try {
-            if (commentaire == null) {
-                throw new ErrorComentaireNull();
-            }
             JpaUtil.creerContextePersistance();
             consultation.setCommentaire(commentaire);
-            consultation.setDateFin(new Date());
-        //consultation.setOccupe(false);
-            Employe disponible = consultation.getEmploye();
-        //disponible.setDisponible(true);
+            consultation.getEmploye().setDispo(Employe.disponibilite.DISPONIBLE);
+            consultation.setConsultationClose(true);
             JpaUtil.ouvrirTransaction();
-            consult = this.consultationDao.update(consultation);
-            dispo = this.employeDao.update(disponible);
+            consultationDao.updateCommentaire(consultation);
+            consultationDao.updateConsultationClose(consultation);
+            employeDao.updateDisponibilite(consultation.getEmploye());
             JpaUtil.validerTransaction();
         }
-         catch (ErrorCommentaireNull e1) {
-            throw new ErrorCommentaireNull();
-        }
-        catch (Exception e2) {
+        catch (Exception e1) {
             JpaUtil.annulerTransaction();
         }
         finally {
             JpaUtil.fermerContextePersistance();
         }
-    } // à voir si on code setOccupe et setDisponible*/
+    }
     
     public List<String> demanderPrediction(String couleur, String animal, int amour, int sante, int travail) {
         AstroNetApi inspiration = new AstroNetApi();

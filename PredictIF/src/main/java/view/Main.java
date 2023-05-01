@@ -108,6 +108,7 @@ public class Main {
         Service sc = new Service();
 
         Client client1 = sc.rechercherClientparId(6L);
+        Client client2 = sc.rechercherClientparId(7L);
         Medium medium1 = sc.rechercherMediumParId(13L);
         Medium medium2 = sc.rechercherMediumParId(14L);
         Medium medium3 = sc.rechercherMediumParId(11L);
@@ -118,6 +119,9 @@ public class Main {
         sc.accepterConsultation(consultation2);
         Consultation consultation3 = sc.demanderConsultation(client1, medium3);
         sc.accepterConsultation(consultation3);
+        sc.finConsultation(consultation1, "");
+        consultation1 = sc.demanderConsultation(client2, medium1);
+        sc.accepterConsultation(consultation1);
 
         sc.listerConsultationsRecente(client1);
         System.out.println(sc.favouritesMediumsList(client1));
@@ -171,7 +175,9 @@ public class Main {
                         int travail = Saisie.lireInteger("Saisir note travail");
                         sc.demanderPrediction(client.getProfilAstral().getCouleur(), client.getProfilAstral().getAnimal(), amour, sante, travail);
                     }
-                    //finConsultation apres je suppose puis les methodes de stats
+                    String commentaire = "Client crédule, lui proposer un rendez vous dès la fin de la consultation";
+                    sc.finConsultation(consultation, commentaire);
+
                 }
             } else if (choixClient == 2) {
                 System.out.println("Inscription : ");
@@ -185,7 +191,7 @@ public class Main {
                     } else {
                         /*                        sc.inscriptionClient(new Client(nom)); faut dautre info pour creer un client sois le
                          * mettre en dur soit refaire la meme chose quavec le mot de passe et le nom (simuler entierement le formulaire d'inscription*/
-                        System.out.println("Inscription réussi.");
+                        System.out.println("Inscription réussie.");
                     }
                 }
             }

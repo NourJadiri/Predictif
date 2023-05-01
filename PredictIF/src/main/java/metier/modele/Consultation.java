@@ -21,6 +21,8 @@ public class Consultation {
 
     private String commentaire;
 
+    private Boolean consultationClose;
+
     public Consultation() {
     }
 
@@ -31,6 +33,7 @@ public class Consultation {
         this.client = client;
         this.medium = medium;
         this.commentaire = "";
+        this.consultationClose = false;
     }
 
     public Date getDate() {
@@ -79,6 +82,14 @@ public class Consultation {
 
     public void setMedium(Medium medium) {
         this.medium = medium;
+    }
+
+    public Boolean getConsultationClose() {
+        return consultationClose;
+    }
+
+    public void setConsultationClose(Boolean consultationClose) {
+        this.consultationClose = consultationClose;
     }
 
     @Override

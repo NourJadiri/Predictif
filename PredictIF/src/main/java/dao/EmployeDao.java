@@ -5,7 +5,6 @@
  */
 package dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class EmployeDao {
         return result;
     }
 
-    public void updateDispotoIndispo(Employe e) {
+    public void updateDisponibilite(Employe e) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         String queryString = "UPDATE Employe SET dispo = :dispoEmploye " +
@@ -55,7 +54,8 @@ public class EmployeDao {
         query.setParameter("employeId", e.getId());
         query.executeUpdate();
     }
-    
+
+
     public Map<Employe, Integer> sortEmployeByClientNumber(){
         EntityManager em = JpaUtil.obtenirContextePersistance();
 

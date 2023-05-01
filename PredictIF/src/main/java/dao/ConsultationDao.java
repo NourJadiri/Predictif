@@ -2,6 +2,7 @@ package dao;
 
 import metier.modele.Client;
 import metier.modele.Consultation;
+import metier.modele.Employe;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -42,6 +43,27 @@ public class ConsultationDao {
         return query.getResultList();
     }
 
+    public void updateCommentaire(Consultation consultation) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
 
+        String queryString = "UPDATE Consultation SET commentaire = :commentaire " +
+                "WHERE id = :consultationId";
 
+        TypedQuery<Employe> query = em.createQuery(queryString, Employe.class);
+        query.setParameter("commentaire", consultation.getCommentaire());
+        query.setParameter("consultationId", consultation.getId());
+        query.executeUpdate();
+    }
+
+    public void updateConsultationClose(Consultation consultation) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "UPDATE Consultation SET commentaire = :consultationClose " +
+                "WHERE id = :consultationId";
+
+        TypedQuery<Employe> query = em.createQuery(queryString, Employe.class);
+        query.setParameter("consultationClose", consultation.getConsultationClose());
+        query.setParameter("consultationId", consultation.getId());
+        query.executeUpdate();
+    }
 }
