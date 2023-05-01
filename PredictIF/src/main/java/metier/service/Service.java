@@ -82,6 +82,19 @@ public class Service {
         return resultat;
     }
 
+    public Client rechercherClientparMail(String mail) {
+        Client resultat;
+        JpaUtil.creerContextePersistance();
+        try {
+            resultat = clientDao.findByMail(mail);
+        } catch (Exception e) {
+            resultat = null;
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return resultat;
+    }
+
     // Retourne le client authentifié grâce à son mail et son mot de passe
     public Client authentifierClientmail(String mail, String MDP) {
         Client res = null;
@@ -271,7 +284,7 @@ public class Service {
     public void finConsultation(Consultation consultation, final String commentaire) {
         Employe employe = consultation.getEmploye();
         consultation.setCommentaire(commentaire);
-        consultation.setConsultationClose(true);
+        consultation.setConsultationTerminee(true);
         employe.setDispo(Employe.disponibilite.DISPONIBLE);
         JpaUtil.creerContextePersistance();
         try {

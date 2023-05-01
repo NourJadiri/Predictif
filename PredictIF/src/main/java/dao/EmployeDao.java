@@ -79,11 +79,20 @@ public class EmployeDao {
 
     public Employe chercherEmployeDisponible(Medium medium) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
-        String queryString = "SELECT e, count(c) as nb_consultation from Employe e left join Consultation c on c.employe = e WHERE e.genre = :genreMedium AND e.dispo = :disponible GROUP BY e ORDER BY nb_consultation";
+
+        String queryString = "SELECT e, count(c) as nb_consultation from Employe e " +
+                "left join Consultation c on c.employe = e " +
+                "WHERE e.genre = :genreMedium AND e.dispo = :disponible " +
+                "GROUP BY e ORDER BY nb_consultation";
+
         TypedQuery<Object[]> query = em.createQuery(queryString, Object[].class);
         query.setParameter("genreMedium", medium.getGenre());
         query.setParameter("disponible", Employe.disponibilite.DISPONIBLE);
-        List<Object[]> resultList = query.setMaxResults(1).getResultList(); //peut être faire une gestion d'erreur si pas d'employé disponible mais je pense pas car ceux qui seront afficher sur l'ihm seront forcement disponible
+
+        // TODO : peut être faire une gestion d'erreur si pas d'employé disponible
+        //         mais je pense pas car ceux qui seront affichés sur l'ihm seront forcement disponible
+        List<Object[]> resultList = query.setMaxResults(1).getResultList();
+
         return (Employe) resultList.get(0)[0];
     }
 
