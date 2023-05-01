@@ -269,15 +269,16 @@ public class Service {
     }
     
     public void finConsultation(Consultation consultation, final String commentaire) {
+        Employe employe = consultation.getEmploye();
+        consultation.setCommentaire(commentaire);
+        consultation.setConsultationClose(true);
+        employe.setDispo(Employe.disponibilite.DISPONIBLE);
+        JpaUtil.creerContextePersistance();
         try {
-            JpaUtil.creerContextePersistance();
-            consultation.setCommentaire(commentaire);
-            consultation.getEmploye().setDispo(Employe.disponibilite.DISPONIBLE);
-            consultation.setConsultationClose(true);
             JpaUtil.ouvrirTransaction();
+            employeDao.updateDisponibilite(employe);
             consultationDao.updateCommentaire(consultation);
             consultationDao.updateConsultationClose(consultation);
-            employeDao.updateDisponibilite(consultation.getEmploye());
             JpaUtil.validerTransaction();
         }
         catch (Exception e1) {
