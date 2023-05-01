@@ -14,7 +14,7 @@ import javax.persistence.Entity;
 @Entity
 public class Cartomancien extends Medium{
 
-    public Cartomancien(String denomination, String genre, String presentation) {
+    public Cartomancien(String denomination, char genre, String presentation) {
         super(denomination, genre, presentation);
     }
 

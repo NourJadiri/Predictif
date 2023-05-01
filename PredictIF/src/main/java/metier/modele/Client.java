@@ -114,6 +114,10 @@ public class Client {
         this.motDePasse = motDePasse;
     }
 
+    public ProfilAstral getProfilAstral() {
+        return profilAstral;
+    }
+
     @Override
     public String toString() {
         return "Client{" + "id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", dateNaissance=" + dateNaissance + ", adressePostale=" + adressePostale + ", mail=" + mail + ", motDePasse=" + motDePasse + '}';

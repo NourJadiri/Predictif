@@ -24,13 +24,13 @@ public class Consultation {
     public Consultation() {
     }
 
-    public Consultation(Date date, Date heure, Employe employe, Client client, Medium medium, String commentaire) {
+    public Consultation(Date date, Date heure, Employe employe, Client client, Medium medium) {
         this.date = date;
         this.heure = heure;
         this.employe = employe;
         this.client = client;
         this.medium = medium;
-        this.commentaire = commentaire;
+        this.commentaire = "";
     }
 
     public Date getDate() {
@@ -39,6 +39,10 @@ public class Consultation {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getHeure() {
+        return heure;
     }
 
     public String getCommentaire() {

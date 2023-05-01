@@ -217,61 +217,26 @@ public class Service {
     public Map<Employe, Integer> afficherRepartitionClientParEmploye(){
         JpaUtil.creerContextePersistance();
 
-        Map<Employe, Integer> classementConsultations = employeDao.sortEmployeByClientNumber();
-
-        return classementConsultations;
+        return employeDao.sortEmployeByClientNumber();
     }
-    
-/*    public Map<Employe, Long> afficherRepartitionClientParEmploye() {
-        JpaUtil.creerContextePersistance();
-        final Map<Employe, Long> repartitionClientParEmp = (Map<Employe, Long>)this.employeDao.nombreDeClientsParEmploye(); 
-        JpaUtil.fermerContextePersistance();
-        return repartitionClientParEmp;
-    }*/
 
     /**
      * SECTION : CONSULTATION
      */
 
-    /*public Employe trouverEmployeDispo(Medium m) {
+    public Consultation demanderConsultation(Client client, Medium medium) {
         JpaUtil.creerContextePersistance();
-        try {
+        Employe employe = employeDao.chercherEmployeDisponible(medium);
+        JpaUtil.fermerContextePersistance();
+        return new Consultation(new Date(), new Date(), employe, client, medium);
+    }
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            JpaUtil.fermerContextePersistance();
-        }
-        return employeDao.findById(2L);
-    } */
-    
-/*    public Employe trouverEmployeDispo(Medium m) {
-        JpaUtil.creerContextePersistance();
-        EmployeDao emp = new EmployeDao();
-        Employe employeDispo = emp.rqEmployeDisponible(m);
-        try {
-            employeDispo= employeDao.findById(2L);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            JpaUtil.fermerContextePersistance();
-        }
-        return employeDispo; 
-    }*/
-
-    public void ajouterConsultation(Consultation consultation) {
+    public void accepterConsultation(Consultation consultation) {
         Employe employe = consultation.getEmploye();
-        Client client = consultation.getClient();
-        Medium medium = consultation.getMedium();
-        String msgClient = "Bonjour " + client.getPrenom();
-        String msgEmploye = "Bonjour " + employe.getPrenom() +
-                ". Consultation requise pour " + client.getPrenom() +
-                " " + client.getNom() + ". Médium à incarner : " + medium.getDenomination();
         JpaUtil.creerContextePersistance();
         try {
             JpaUtil.ouvrirTransaction();
             consultationDao.create(consultation);
-            Message.envoyerNotification(employe.getTelephone(), msgClient);
             employe.setDispo(Employe.disponibilite.INDISPONIBLE);
             employeDao.updateDispotoIndispo(employe);
             JpaUtil.validerTransaction();
@@ -411,18 +376,18 @@ public class Service {
         ArrayList<Medium> mediums = new ArrayList<>();
 
         // Creating Astrologue
-        Astrologue astrologue1 = new Astrologue("Maxime Ganachaud", "H", "Basé à Lyon, Maxime Ganachaud est un des jeunes astrologues les plus talentueux de sa génération. ", "Ecole Normale Supérieure", "2006");
-        Astrologue astrologue2 = new Astrologue("Alix Tair", "F", "Basée à Marseille, Alix Tair est une astrologue reconnue pour son approche à la fois pragmatique et spirituelle de l'astrologie. ", "Université Paris Diderot", "2010");
-        Astrologue astrologue3 = new Astrologue("Sophie Rey", "F", "Sophie Rey est une astrologue humaniste et passionnée, basée à Toulouse. Elle pratique l'astrologie tropicale et met son expertise au service de ses clients pour leur permettre de mieux se comprendre et de mieux appréhender leur avenir.", "Institut Astrologique de Carthage", "2012");
+        Astrologue astrologue1 = new Astrologue("Maxime Ganachaud", 'H', "Basé à Lyon, Maxime Ganachaud est un des jeunes astrologues les plus talentueux de sa génération. ", "Ecole Normale Supérieure", "2006");
+        Astrologue astrologue2 = new Astrologue("Alix Tair", 'F', "Basée à Marseille, Alix Tair est une astrologue reconnue pour son approche à la fois pragmatique et spirituelle de l'astrologie. ", "Université Paris Diderot", "2010");
+        Astrologue astrologue3 = new Astrologue("Sophie Rey", 'F', "Sophie Rey est une astrologue humaniste et passionnée, basée à Toulouse. Elle pratique l'astrologie tropicale et met son expertise au service de ses clients pour leur permettre de mieux se comprendre et de mieux appréhender leur avenir.", "Institut Astrologique de Carthage", "2012");
 
         // Creating Cartomancien
-        Cartomancien cartomancien1 = new Cartomancien("Mme Irma", "F", "Mme Irma, la cartomancienne de la famille depuis des générations, saura répondre à toutes vos questions les plus intimes et inavouables. Découvrez votre avenir grâce à ses cartes qui ne mentent jamais !");
-        Cartomancien cartomancien2 = new Cartomancien("Ludovic le Magnifique", "M", "Ludovic le Magnifique, célèbre cartomancien de la région de Nice, saura vous éblouir par sa maîtrise des cartes. Il propose des consultations très appréciées pour leur spectacle et leur interactivité avec le public.");
+        Cartomancien cartomancien1 = new Cartomancien("Mme Irma", 'F', "Mme Irma, la cartomancienne de la famille depuis des générations, saura répondre à toutes vos questions les plus intimes et inavouables. Découvrez votre avenir grâce à ses cartes qui ne mentent jamais !");
+        Cartomancien cartomancien2 = new Cartomancien("Ludovic le Magnifique", 'M', "Ludovic le Magnifique, célèbre cartomancien de la région de Nice, saura vous éblouir par sa maîtrise des cartes. Il propose des consultations très appréciées pour leur spectacle et leur interactivité avec le public.");
 
         // Creating Spirite
-        Spirite spirite1 = new Spirite("Marie Lune", "F", "Médium spirite depuis plus de 30 ans, j'ai développé mes dons grâce à mes expériences personnelles. J'apporte des réponses à vos questions grâce à l'aide de mes guides spirituels et je suis spécialisée dans la communication avec les défunts.", "Boule de cristal");
-        Spirite spirite2 = new Spirite("Morgane d'Ecosse", "F", "Médium spirite depuis plus de 20 ans, je vous propose de découvrir votre avenir grâce à ma communication avec le monde des esprits. Avec bienveillance et empathie, je vous guide vers la clarté et la sérénité que vous cherchez.", "Tableau noir");
-        Spirite spirite3 = new Spirite("Antoine Lune", "M", "Médium spirite depuis plus de 30 ans, je suis spécialisé dans les contacts avec les défunts et les entités éthérées. Grâce à mes dons exceptionnels, je vous apporte les réponses que vous cherchez sur les sujets les plus délicats.", "Verre d'eau");
+        Spirite spirite1 = new Spirite("Marie Lune", 'F', "Médium spirite depuis plus de 30 ans, j'ai développé mes dons grâce à mes expériences personnelles. J'apporte des réponses à vos questions grâce à l'aide de mes guides spirituels et je suis spécialisée dans la communication avec les défunts.", "Boule de cristal");
+        Spirite spirite2 = new Spirite("Morgane d'Ecosse", 'F', "Médium spirite depuis plus de 20 ans, je vous propose de découvrir votre avenir grâce à ma communication avec le monde des esprits. Avec bienveillance et empathie, je vous guide vers la clarté et la sérénité que vous cherchez.", "Tableau noir");
+        Spirite spirite3 = new Spirite("Antoine Lune", 'M', "Médium spirite depuis plus de 30 ans, je suis spécialisé dans les contacts avec les défunts et les entités éthérées. Grâce à mes dons exceptionnels, je vous apporte les réponses que vous cherchez sur les sujets les plus délicats.", "Verre d'eau");
 
         mediums.add(astrologue1);
         mediums.add(astrologue2);

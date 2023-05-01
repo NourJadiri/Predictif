@@ -24,13 +24,13 @@ public abstract class Medium implements Serializable {
     @Column(insertable = false , updatable = false)
     private String type_medium;
     private String denomination;
-    private String genre;
+    private char genre;
     private String presentation;
 
     public Medium() {
     }
 
-    public Medium(String denomination, String genre, String presentation) {
+    public Medium(String denomination, char genre, String presentation) {
         this.denomination = denomination;
         this.genre = genre;
         this.presentation = presentation;
@@ -44,11 +44,11 @@ public abstract class Medium implements Serializable {
         this.denomination = denomination;
     }
 
-    public String getGenre() {
+    public char getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(char genre) {
         this.genre = genre;
     }
 

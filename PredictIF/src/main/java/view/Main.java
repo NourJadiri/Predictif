@@ -5,8 +5,7 @@
  */
 package view;
 
-import java.util.*;
-
+import util.Message;
 import util.Saisie;
 
 import dao.JpaUtil;
@@ -14,9 +13,7 @@ import dao.JpaUtil;
 import metier.modele.*;
 import metier.service.Service;
 
-import javax.swing.plaf.synth.SynthUI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,10 +33,10 @@ public class Main {
 
 
         initDb();
+        testerAjoutConsultation();
         //testerSaisie();
-        //testerAjoutConsultation();
         //getPredction();
-        testerAfficherRepartitionClient();
+        //testerAfficherRepartitionClient();
         JpaUtil.fermerFabriquePersistance();
     }
 
@@ -110,32 +107,17 @@ public class Main {
     public static void testerAjoutConsultation() {
         Service sc = new Service();
 
-        // Create a list to hold the consultations
-        List<Consultation> consultations = new ArrayList<>();
-
-        Employe employe1 = sc.rechercherEmploye(1L);
-        Employe employe2 = sc.rechercherEmploye(2L);
-
         Client client1 = sc.rechercherClientparId(6L);
         Medium medium1 = sc.rechercherMediumParId(13L);
         Medium medium2 = sc.rechercherMediumParId(14L);
+        Medium medium3 = sc.rechercherMediumParId(11L);
 
-        // Create the first consultation
-        Consultation consultation1 = new Consultation(new Date(), new Date(), employe1, client1, medium1, "bonsoir");
-        consultations.add(consultation1);
-
-        // Create the second consultation
-        Consultation consultation2 = new Consultation(new Date(), new Date(), employe2, client1, medium1, "bonjour");
-        consultations.add(consultation2);
-
-        // Create the thrid consultation
-        Consultation consultation3 = new Consultation(new Date(), new Date(), employe1, client1, medium2, "au revoir");
-        consultations.add(consultation3);
-
-        // Persisting all consultation objects
-        for (Consultation consultation : consultations) {
-            sc.ajouterConsultation(consultation);
-        }
+        Consultation consultation1 = sc.demanderConsultation(client1, medium1);
+        sc.accepterConsultation(consultation1);
+        Consultation consultation2 = sc.demanderConsultation(client1, medium2);
+        sc.accepterConsultation(consultation2);
+        Consultation consultation3 = sc.demanderConsultation(client1, medium3);
+        sc.accepterConsultation(consultation3);
 
         sc.listerConsultationsRecente(client1);
         System.out.println(sc.favouritesMediumsList(client1));
@@ -145,13 +127,10 @@ public class Main {
         Service sc = new Service();
 
         List<Client> clients = sc.initClients();
-        List<Employe> employes = sc.initEmployes();
         List<Medium> mediums = sc.initMediums();
-        List<Consultation> consultations = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            consultations.add(new Consultation(new Date(), new Date(), employes.get(i), clients.get(i), mediums.get(i), "commentaire " + i));
-            sc.ajouterConsultation(consultations.get(i));
+            sc.demanderConsultation(clients.get(i), mediums.get(i));
         }
 
         // Ajout de la recherche des 5 consultations récentes
@@ -159,6 +138,7 @@ public class Main {
     }
 
     public static void testerSaisie() {
+
         List<Integer> choix = new ArrayList<Integer>() {{
             add(1);
             add(2);
@@ -173,6 +153,26 @@ public class Main {
                 String mdp = Saisie.lireChaine("Entrez votre mot de passe : ");
                 Client client = sc.authentifierClientmail(mail, mdp);
                 System.out.println("Bonjour " + client.getPrenom() + " " + client.getNom());
+                Medium medium = sc.rechercherMediumParId(11L); // appuie sur un bouton
+                System.out.println("Vous avez selectionné : " + medium.getDenomination());
+                Consultation consultation = sc.demanderConsultation(client, medium); // on creer une consultation et on va chercher un employe
+                String msgEmploye = "Bonjour " + consultation.getEmploye().getPrenom() +
+                        ". Consultation requise pour " + client.getPrenom() +
+                        " " + client.getNom() + ". Médium à incarner : " + medium.getDenomination();
+                Message.envoyerNotification(consultation.getEmploye().getTelephone(), msgEmploye);
+                if (Saisie.lireInteger("1 - Accepter \n 2 - Refuser", choix) == 1){
+                    sc.accepterConsultation(consultation);
+                    String msgClient = "Bonjour " + client.getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
+                            + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
+                    Message.envoyerNotification(client.getNumTel(), msgClient);
+                    if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1-Oui \n 2-Non", choix) == 1){
+                        int amour = Saisie.lireInteger("Saisir note amour");
+                        int sante = Saisie.lireInteger("Saisir note sante");
+                        int travail = Saisie.lireInteger("Saisir note travail");
+                        sc.demanderPrediction(client.getProfilAstral().getCouleur(), client.getProfilAstral().getAnimal(), amour, sante, travail);
+                    }
+                    //finConsultation apres je suppose puis les methodes de stats
+                }
             } else if (choixClient == 2) {
                 System.out.println("Inscription : ");
                 String nom = Saisie.lireChaine("Choisissez votre nom d'utilisateur : ");
