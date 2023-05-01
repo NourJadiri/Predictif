@@ -69,7 +69,7 @@ public class EmployeDao {
 
         for (Object[] objects : resultList ){
             Employe e = (Employe) objects[0];
-            Integer nbConsultation = (Integer) objects[1];
+            Integer nbConsultation = Math.toIntExact((Long) objects[1]);
 
             consultationNumberPerEmployee.put(e,nbConsultation);
         }

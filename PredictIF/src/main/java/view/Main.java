@@ -35,8 +35,8 @@ public class Main {
         initDb();
         testerAjoutConsultation();
         //testerSaisie();
-        //getPredction();
-        //testerAfficherRepartitionClient();
+        getPredction();
+        testerAfficherRepartitionClient();
         JpaUtil.fermerFabriquePersistance();
     }
 
