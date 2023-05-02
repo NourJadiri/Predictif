@@ -380,6 +380,20 @@ public class Service {
         return mediumList;
     }
 
+    public List<Medium> getAllMediums() {
+        JpaUtil.creerContextePersistance();
+        List<Medium> mediumList = mediumDao.getAllMediums(); ;
+        JpaUtil.fermerContextePersistance();
+        return mediumList;
+    }
+
+    public Map<Medium, Integer> afficherRepartitionConsultationParMedium(){
+        JpaUtil.creerContextePersistance();
+        Map<Medium,Integer> mediumMap = mediumDao.sortMediumsByNumberOfConsultations();
+        JpaUtil.fermerContextePersistance();
+        return mediumMap;
+    }
+
     public List<Medium> initMediums() {
         ArrayList<Medium> mediums = new ArrayList<>();
 
@@ -423,12 +437,6 @@ public class Service {
         }
 
         return mediums;
-    }
-    public List<Medium> getAllMediums() {
-        JpaUtil.creerContextePersistance();
-        List<Medium> mediumList = mediumDao.getAllMediums(); ;
-        JpaUtil.fermerContextePersistance();
-        return mediumList;
     }
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();

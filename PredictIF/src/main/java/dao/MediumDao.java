@@ -1,13 +1,12 @@
 package dao;
 
 import metier.modele.Client;
+import metier.modele.Employe;
 import metier.modele.Medium;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class MediumDao {
     public void create(Medium medium){
@@ -74,6 +73,28 @@ public class MediumDao {
             mediumList.add(m);
         }
         return mediumList;
+    }
+
+    public Map<Medium,Integer> sortMediumsByNumberOfConsultations() {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "select c.medium as m , count(c) as nb_consultation " +
+        "from Consultation c group by m order by nb_consultation desc";
+
+        TypedQuery<Object[]> query = em.createQuery(queryString,Object[].class);
+
+        List<Object[]> resultList = query.getResultList();
+        Map<Medium,Integer> consultationNumberPerMedium = new HashMap<>();
+
+        for (Object[] objects : resultList ){
+            Medium m = (Medium) objects[0];
+            Integer nbConsultation = Math.toIntExact((Long) objects[1]);
+
+            consultationNumberPerMedium.put(m,nbConsultation);
+        }
+
+        return consultationNumberPerMedium;
+
     }
 
     public List<Medium> getAllMediums() {
