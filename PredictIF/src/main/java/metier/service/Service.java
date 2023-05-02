@@ -201,7 +201,7 @@ public class Service {
         Employe employe;
         try{
             employe = employeDao.findByMail(mail);
-            if(employe.getMotDePasse() != mdp){
+            if(!employe.getMotDePasse().equals(mdp)){
                 employe = null;
             }
         }
