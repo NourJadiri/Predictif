@@ -71,4 +71,13 @@ public class ProfilAstral implements Serializable {
     public void setAnimal(String animal) {
         this.animal = animal;
     }
+
+    @Override
+    public String toString() {
+        return "ProfilAstral : \n" +
+                ">signeZodiaque : " + signeZodiaque + '\n' +
+                ">signeChinois : " + signeChinois + '\n' +
+                ">couleur : " + couleur + '\n' +
+                ">animal : " + animal + '\n';
+    }
 }

@@ -2,7 +2,6 @@ package dao;
 
 import metier.modele.Client;
 import metier.modele.Consultation;
-import metier.modele.Employe;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -30,7 +29,7 @@ public class ConsultationDao {
         return query.setMaxResults(5).getResultList();
     }
 
-    public List<Consultation> showHistoricConsultations(Client client){
+    public List<Consultation> getConsultationHistory(Client client){
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         String queryString = "SELECT c FROM Consultation c " +

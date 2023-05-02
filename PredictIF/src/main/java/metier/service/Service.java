@@ -196,6 +196,26 @@ public class Service {
         return employe;
     }
 
+    public Employe authentifierEmploye(String mail, String mdp){
+        JpaUtil.creerContextePersistance();
+        Employe employe;
+        try{
+            employe = employeDao.findByMail(mail);
+            if(employe.getMotDePasse() != mdp){
+                employe = null;
+            }
+        }
+        catch(Exception e){
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, e);
+            employe = null;
+        }
+        finally{
+            JpaUtil.fermerContextePersistance();
+        }
+
+        return employe;
+    }
+
     public List<Employe> initEmployes() {
         ArrayList<Employe> employes = new ArrayList<>();
 
@@ -280,6 +300,22 @@ public class Service {
 
         return top5;
     }
+
+    public List<Consultation> getHistoriqueClient(Client client){
+        List<Consultation> historiqueClient;
+        JpaUtil.creerContextePersistance();
+
+        try{
+            historiqueClient = consultationDao.getConsultationHistory(client);
+        }catch(Exception ex){
+            historiqueClient = null;
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            JpaUtil.fermerContextePersistance();
+        }
+
+        return historiqueClient;
+    }
     
     public void finConsultation(Consultation consultation, final String commentaire) {
         Employe employe = consultation.getEmploye();
@@ -317,7 +353,6 @@ public class Service {
     /**
      * SECTION : MEDIUM
      */
-
     public void ajouterMedium(Medium medium) {
         JpaUtil.creerContextePersistance();
 
@@ -380,7 +415,8 @@ public class Service {
         return mediumList;
     }
 
-    public List<Medium> getAllMediums() {
+
+    public List<Medium> listerTousLesMediums() {
         JpaUtil.creerContextePersistance();
         List<Medium> mediumList = mediumDao.getAllMediums(); ;
         JpaUtil.fermerContextePersistance();
@@ -403,13 +439,13 @@ public class Service {
         Astrologue astrologue3 = new Astrologue("Sophie Rey", 'F', "Sophie Rey est une astrologue humaniste et passionnée, basée à Toulouse. Elle pratique l'astrologie tropicale et met son expertise au service de ses clients pour leur permettre de mieux se comprendre et de mieux appréhender leur avenir.", "Institut Astrologique de Carthage", "2012");
 
         // Creating Cartomancien
-        Cartomancien cartomancien1 = new Cartomancien("Mme Irma", 'F', "Mme Irma, la cartomancienne de la famille depuis des générations, saura répondre à toutes vos questions les plus intimes et inavouables. Découvrez votre avenir grâce à ses cartes qui ne mentent jamais !");
-        Cartomancien cartomancien2 = new Cartomancien("Ludovic le Magnifique", 'M', "Ludovic le Magnifique, célèbre cartomancien de la région de Nice, saura vous éblouir par sa maîtrise des cartes. Il propose des consultations très appréciées pour leur spectacle et leur interactivité avec le public.");
+        Cartomancien cartomancien1 = new Cartomancien("Mme Irma", 'H', "Mme Irma, la cartomancienne de la famille depuis des générations, saura répondre à toutes vos questions les plus intimes et inavouables. Découvrez votre avenir grâce à ses cartes qui ne mentent jamais !");
+        Cartomancien cartomancien2 = new Cartomancien("Ludovic le Magnifique", 'H', "Ludovic le Magnifique, célèbre cartomancien de la région de Nice, saura vous éblouir par sa maîtrise des cartes. Il propose des consultations très appréciées pour leur spectacle et leur interactivité avec le public.");
 
         // Creating Spirite
         Spirite spirite1 = new Spirite("Marie Lune", 'F', "Médium spirite depuis plus de 30 ans, j'ai développé mes dons grâce à mes expériences personnelles. J'apporte des réponses à vos questions grâce à l'aide de mes guides spirituels et je suis spécialisée dans la communication avec les défunts.", "Boule de cristal");
         Spirite spirite2 = new Spirite("Morgane d'Ecosse", 'F', "Médium spirite depuis plus de 20 ans, je vous propose de découvrir votre avenir grâce à ma communication avec le monde des esprits. Avec bienveillance et empathie, je vous guide vers la clarté et la sérénité que vous cherchez.", "Tableau noir");
-        Spirite spirite3 = new Spirite("Antoine Lune", 'M', "Médium spirite depuis plus de 30 ans, je suis spécialisé dans les contacts avec les défunts et les entités éthérées. Grâce à mes dons exceptionnels, je vous apporte les réponses que vous cherchez sur les sujets les plus délicats.", "Verre d'eau");
+        Spirite spirite3 = new Spirite("Antoine Lune", 'H', "Médium spirite depuis plus de 30 ans, je suis spécialisé dans les contacts avec les défunts et les entités éthérées. Grâce à mes dons exceptionnels, je vous apporte les réponses que vous cherchez sur les sujets les plus délicats.", "Verre d'eau");
 
         mediums.add(astrologue1);
         mediums.add(astrologue2);
@@ -438,6 +474,7 @@ public class Service {
 
         return mediums;
     }
+
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
     protected ConsultationDao consultationDao = new ConsultationDao();

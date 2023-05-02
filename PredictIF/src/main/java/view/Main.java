@@ -13,7 +13,6 @@ import dao.JpaUtil;
 import metier.modele.*;
 import metier.service.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -151,73 +150,129 @@ public class Main {
         List<Integer> choix = new ArrayList<Integer>() {{
             add(1);
             add(2);
+            add(3);
+        }};
+        final int CLIENT = 1;
+        final int EMPLOYE = 2;
+        final int QUITTER = 3;
+        System.out.println("Bonjour, bienvenue dans PREDICT'IF");
+
+        int choixInt = Saisie.lireInteger("Vous êtes un : \n 1. Client \n 2. Employe \n 3.Quitter l'application", choix);
+        boolean appOpen = true;
+        do{
+            switch(choixInt){
+                case CLIENT:
+                    boolean activeUser;
+                    do{
+                        activeUser = displayClientMenu();
+                    }while(activeUser);
+                    break;
+
+                case EMPLOYE:
+                    displayEmployeMenu();
+                    break;
+
+                case QUITTER:
+                    appOpen = false;
+                    System.exit(0);
+                    break;
+            }
+
+        }while(appOpen);
+
+    }
+
+    public static boolean displayClientMenu(){
+        List<Integer> choix = new ArrayList<Integer>() {{
+            add(1);
+            add(2);
+            add(3);
         }};
 
+        Client client = null;
+
+        boolean loop = true;
+
+        int choixClient = Saisie.lireInteger("Vous êtes un : \n 1. Client de PREDICT'IF \n 2. Nouveau Client \n 3. Revenir au menu précédent", choix);
+
+        // Si le client est déjà présent dans la base de donnée, on l'authentifie
+        if (choixClient == 1) {
+            client = authenticateClient();
+        }
+        // Si nouveau client, on lui crée un profil
+        else if (choixClient == 2) {
+            client = registerClient();
+        }
+        else{
+            loop = false;
+        }
+
+        boolean keepDisplayingClientActions;
+
+        if(loop){
+            do{
+                keepDisplayingClientActions = displayClientActions(client);
+            }while(keepDisplayingClientActions);
+        }
+
+        return loop;
+    }
+
+    public static boolean displayClientActions(Client client){
+        boolean loop = true;
+        Integer action = Saisie.lireInteger("Veuillez saisir l'action que vous voulez effectuer : " +
+                "\n1. Demander une consultation" +
+                "\n2. Voir vos cinq dernieres consultations" +
+                "\n3. Voir votre liste de mediums préférés" +
+                "\n4. Visualiser votre profil astral" +
+                "\n5. Vous deconnecter",Arrays.asList(1,2,3,4,5));
+
+        switch(action){
+            case 1:
+                startConsultationProcess(client);
+                break;
+            case 2:
+                displayFiveLastConsultations(client);
+                break;
+            case 3:
+                displayClientHistory(client);
+                break;
+            case 4:
+                displayProfilAstral(client);
+                break;
+            default:
+                loop = false;
+                break;
+        }
+
+        return loop;
+    }
+
+    public static Client authenticateClient(){
+        Client client = null;
+
+        System.out.println("CONNEXION CLIENT");
+        System.out.println("----------------");
         Service sc = new Service();
 
-        int choixInt = Saisie.lireInteger("Vous êtes un : \n 1. Client \n 2. Employe", choix);
+        while(client == null){
+            String mail = Saisie.lireChaine("Entrez votre adresse mail : ");
+            String mdp = Saisie.lireChaine("Entrez votre mot de passe : ");
 
-        if (choixInt == 1) {
-            int choixClient = Saisie.lireInteger("Vous êtes un : \n 1. Client de PREDICT'IF \n 2. Nouveau Client", choix);
-            if (choixClient == 1) {
-                Client client = null;
+            client = sc.authentifierClientmail(mail, mdp);
 
-                System.out.println("CONNEXION");
-                System.out.println("---------");
-
-                while (client == null) {
-                    String mail = Saisie.lireChaine("Entrez votre adresse mail : ");
-                    String mdp = Saisie.lireChaine("Entrez votre mot de passe : ");
-
-                    client = sc.authentifierClientmail(mail, mdp);
-
-                    if (client == null) {
-                        System.out.println("Client non trouvé, veuillez réessayer");
-                    }
-                }
-
-                System.out.println("Bonjour " + client.getPrenom() + " " + client.getNom());
-
-                Medium medium = chooseMedium();
-                System.out.println("Vous avez selectionné : " + medium.getDenomination());
-
-                Consultation consultation = sc.demanderConsultation(client, medium);
-
-                /// Section employé
-                String msgEmploye = "Bonjour " + consultation.getEmploye().getPrenom() +
-                        ". Consultation requise pour " + client.getPrenom() +
-                        " " + client.getNom() + ".\n Médium à incarner : " + medium.getDenomination();
-
-                Message.envoyerNotification(consultation.getEmploye().getTelephone(), msgEmploye);
-
-                if (Saisie.lireInteger("1. Accepter \n 2. Refuser", choix) == 1) {
-                    sc.accepterConsultation(consultation);
-
-                    String msgClient = "Bonjour " + client.getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
-                            + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
-                    Message.envoyerNotification(client.getNumTel(), msgClient);
-
-                    if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1.Oui \n 2.Non", choix) == 1) {
-                        generatePrediction(client);
-                    }
-
-                    String commentaire = Saisie.lireChaine("Un commentaire pour vos collègues : ");
-
-                    sc.finConsultation(consultation, commentaire);
-                }
-            }
-            // Si nouveau client
-            else if (choixClient == 2) {
-                System.out.println("INSCRIPTION");
-                System.out.println("-----------");
-
-                Client newClient = registerClient();
-                sc.inscriptionClient(newClient);
+            if(client == null){
+                System.out.println("Client non trouvé, veuillez réessayer");
             }
         }
+
+        System.out.println("Bonjour " + client.getPrenom() + " " + client.getNom());
+        return client;
     }
 
     public static Client registerClient(){
+        Service sc = new Service();
+
         System.out.println("INSCRIPTION CLIENT");
         System.out.println("------------------");
 
@@ -233,7 +288,44 @@ public class Main {
         String mail = inputMail();
         String motDePasse = inputString("Et enfin, votre mot de passe");
 
-        return new Client(nom , prenom , dateNaissance , adressePostale , mail , motDePasse , numTel);
+        Client client = new Client(nom , prenom , dateNaissance , adressePostale , mail , motDePasse , numTel);
+        sc.inscriptionClient(client);
+
+        return client;
+    }
+
+    public static void displayFiveLastConsultations(Client client){
+        Service sc = new Service();
+        List<Consultation> recentConsultations = sc.listerConsultationsRecente(client);
+
+        if(recentConsultations.size() != 0){
+            for(Consultation c : recentConsultations){
+                System.out.println("-Le " + c.getDate() + " à " + c.getHeure() + ", consultation avec " + c.getMedium().getDenomination());
+            }
+        }
+        else{
+            System.out.println("Vous n'avez aucune consultation !! Pensez à prendre rendez vous..");
+        }
+    }
+
+    public static void displayClientHistory(Client client){
+        Service sc = new Service();
+
+        List<Consultation> clientHistory = sc.getHistoriqueClient(client);
+
+        if(clientHistory.size() != 0){
+            for(Consultation c : clientHistory){
+                System.out.println("-Le " + c.getDate() + " à " + c.getHeure() + ", consultation avec " + c.getMedium().getDenomination());
+            }
+        }
+        else{
+            System.out.println("Votre historique est vide... Vous avez pensé à voir nos médiums ?");
+        }
+
+    }
+
+    public static void displayProfilAstral(Client client){
+        System.out.println(client.getProfilAstral());
     }
 
     /// INPUTS
@@ -286,34 +378,47 @@ public class Main {
 
         return mail;
     }
-
     /// CHOIX DU MEDIUM
     public static Medium chooseMedium(){
         Service sc = new Service();
-        ArrayList<String> mediumTypes = chooseMediumType();
-        String mediumGender = chooseMediumGender();
 
-        List<Medium> mediumList = sc.filtrerMediums(mediumGender , mediumTypes);
+        List<Medium> mediumList;
+
+        do{
+            ArrayList<String> mediumTypes = chooseMediumType();
+            String mediumGender = chooseMediumGender();
+
+            mediumList = sc.filtrerMediums(mediumGender , mediumTypes);
+
+            if(mediumList.size() == 0){
+                System.out.println("Désolé, mais aucun médium ne répond à vos filtres...");
+            }
+        }while(mediumList.size() == 0);
+
         List<Integer> mediumListIndexes = possibleMediumIndexes(mediumList);
-        System.out.println("Choisissez le médium qui vous convient");
+
         displayMediumList(mediumList);
+        System.out.println("Choisissez le médium qui vous convient : ");
 
         Integer mediumIndex = Saisie.lireInteger("",mediumListIndexes);
 
-        return mediumList.get(mediumIndex - 1);
+        Medium medium = mediumList.get(mediumIndex - 1);
+        System.out.println("Vous avez selectionné : " + medium.getDenomination());
+
+        return medium;
     }
     public static ArrayList<String> chooseMediumType(){
         LinkedList<String> types = new LinkedList<>();
-        types.add("1. Astrologue");
-        types.add("2. Cartomancien");
-        types.add("3. Spirite");
-        types.add("4. Tout");
+        types.add("Astrologue");
+        types.add("Cartomancien");
+        types.add("Spirite");
+        types.add("Tout");
 
         ArrayList<String> typesChosen = new ArrayList<>();
 
         System.out.println("Quel type de médium voulez vous consulter ?");
-        for(String type : types){
-            System.out.println(type);
+        for(int i = 0 ; i < types.size() ; i++){
+            System.out.println((i+1) + ". " + types.get(i));
         }
 
         Integer type = Saisie.lireInteger("");
@@ -336,8 +441,8 @@ public class Main {
     public static void displayMediumList(List<Medium> mediumList){
         System.out.println("Les médiums qui répondent à vos filtres sont : ");
         for (int i = 0 ; i < mediumList.size() ; i++) {
-            System.out.println((i+1) + " - " + mediumList.get(i).getDenomination());
-            System.out.println("\n" + mediumList.get(i).getPresentation());
+            System.out.println((i+1) + ". " + mediumList.get(i).getDenomination());
+            System.out.println(mediumList.get(i).getPresentation());
         }
     }
     public static List<Integer> possibleMediumIndexes(List<Medium> mediumList){
@@ -349,19 +454,175 @@ public class Main {
 
         return r;
     }
+    /// EMPLOYE
+    public static Employe authenticateEmploye(){
+        Service sc = new Service();
+        Employe employe = null;
 
+        System.out.println("ESPACE EMPLOYE");
+        System.out.println("--------------");
+
+        while(employe == null){
+            String mail = inputMail();
+            String password = inputString("Veuillez entrer votre mot de passe");
+            employe = sc.authentifierEmploye(mail, password);
+
+            if(employe == null){
+                System.out.println("Email ou mot de passe incorrect");
+            }
+        }
+
+        System.out.println("Bonjour " + employe.getPrenom() + ".");
+        return employe;
+
+    }
+
+    public static void displayEmployeMenu(){
+
+        Employe employe = authenticateEmploye();
+
+
+        boolean keepDisplayingEmployeMenu;
+        do{
+            keepDisplayingEmployeMenu = displayEmployeActions(employe);
+        }while(keepDisplayingEmployeMenu);
+
+    }
+
+    public static boolean displayEmployeActions(Employe employe){
+
+        boolean loop = true;
+
+        Integer choixEmploye = Saisie.lireInteger("Vous souhaitez : " +
+                "\n 1. Voir le nombre de consultations par medium" +
+                "\n 2. Voir le top 5 des médiums choisis par les clients" +
+                "\n 3. Voir la répartition des clients par employe" +
+                "\n 4. Vous deconnecter", Arrays.asList(1,2,3,4));
+
+        switch (choixEmploye){
+            case 1:
+                displayConsultationsPerMedium();
+                break;
+            case 2:
+                displayTopFiveMediums();
+                break;
+            case 3:
+                displayClientRepartition();
+                break;
+            default:
+                loop = false;
+                break;
+        }
+
+        return loop;
+    }
+
+    public static void displayConsultationsPerMedium(){
+        Service sc = new Service();
+
+        System.out.println("NOMBRE DE CONSULTATION PAR MEDIUM");
+        System.out.println("---------------------------------");
+
+        Map<Medium, Integer> consultationsPerMedium = sc.afficherRepartitionConsultationParMedium();
+
+        for(Map.Entry<Medium, Integer> e : consultationsPerMedium.entrySet() ){
+            System.out.println(" -" + e.getKey() + " : " + e.getValue());
+        }
+    }
+
+    public static void displayTopFiveMediums(){
+        Service sc = new Service();
+
+        System.out.println("TOP 5 DES MEDIUMS LES PLUS CONSULTES");
+        System.out.println("------------------------------------");
+
+        Map<Medium, Integer> consultationsPerMedium = sc.afficherRepartitionConsultationParMedium();
+
+        Set<Map.Entry<Medium, Integer>> entrySet = consultationsPerMedium.entrySet();
+
+        int count = 0;
+
+        System.out.println("Vos cinq médiums les plus consultés");
+
+        for(Map.Entry<Medium, Integer> e : consultationsPerMedium.entrySet()){
+            if(count < 5){
+                System.out.println(" -" + e.getKey() + " : " + e.getValue());
+                count++;
+            }
+        }
+
+    }
+
+    public static void displayClientRepartition(){
+        Service sc = new Service();
+
+        Client client = null;
+
+        boolean loop = true;
+
+        while(loop && client == null){
+
+            Long id = Long.valueOf(Saisie.lireInteger("Saisissez l'id du client souhaité"));
+            client = sc.rechercherClientparId(id);
+
+            if(client == null){
+                System.err.println("Aucun client avec l'id " + id + " n'est présent dans votre base de donnée");
+                System.err.println("Veuillez réessayer svp...");
+            }
+        }
+
+    }
     /// REPONSE EMPLOYE
+    public static void alertEmploye(Consultation consultation){
+        String msgEmploye = "Bonjour " + consultation.getEmploye().getPrenom() +
+                ". Consultation requise pour " + consultation.getClient().getPrenom() +
+                " " + consultation.getClient().getNom() + ".\n Médium à incarner : " + consultation.getMedium().getDenomination();
+
+        Message.envoyerNotification(consultation.getEmploye().getTelephone(), msgEmploye);
+    }
     public static void generatePrediction(Client client){
+        List<Integer> notes = Arrays.asList(1,2,3,4);
         List<String> prediction;
         Service sc = new Service();
 
-        int amour = Saisie.lireInteger("Saisir note amour");
-        int sante = Saisie.lireInteger("Saisir note sante");
-        int travail = Saisie.lireInteger("Saisir note travail");
+        int amour = Saisie.lireInteger("Saisir note amour",notes);
+        int sante = Saisie.lireInteger("Saisir note sante",notes);
+        int travail = Saisie.lireInteger("Saisir note travail",notes);
         prediction = sc.demanderPrediction(client.getProfilAstral().getCouleur(), client.getProfilAstral().getAnimal(), amour, sante, travail);
         System.out.println("Prediction Amour : " + prediction.get(0));
         System.out.println("Prediction Sante : " + prediction.get(1));
         System.out.println("Prediction Travail : " + prediction.get(2));
 
+    }
+    /// CONSULTATION
+    public static void startConsultationProcess(Client client){
+        List<Integer> choix = new ArrayList<Integer>() {{
+            add(1);
+            add(2);
+        }};
+
+        Service sc = new Service();
+        Medium medium = chooseMedium();
+
+        Consultation consultation = sc.demanderConsultation(client, medium);
+
+        /// Section employé
+        alertEmploye(consultation);
+
+        if (Saisie.lireInteger("1. Accepter \n2. Refuser", choix) == 1){
+            sc.accepterConsultation(consultation);
+
+            String msgClient = "Bonjour " + client.getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
+                    + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
+            Message.envoyerNotification(client.getNumTel(), msgClient);
+
+            if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1.Oui \n 2.Non", choix) == 1){
+                generatePrediction(client);
+            }
+
+            String commentaire = Saisie.lireChaine("Un commentaire pour vos collègues : ");
+
+            sc.finConsultation(consultation, commentaire);
+        }
     }
 }
