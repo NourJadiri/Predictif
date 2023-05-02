@@ -235,7 +235,7 @@ public class Main {
                 displayFiveLastConsultations(client);
                 break;
             case 3:
-                displayClientHistory(client);
+                displayClientFavMediums(client);
                 break;
             case 4:
                 displayProfilAstral(client);
@@ -308,20 +308,14 @@ public class Main {
         }
     }
 
-    public static void displayClientHistory(Client client){
+    public static void displayClientFavMediums(Client client){
         Service sc = new Service();
 
-        List<Consultation> clientHistory = sc.getHistoriqueClient(client);
+        Map<Medium, Integer> favouriteMediums = sc.favouritesMediumsList(client);
 
-        if(clientHistory.size() != 0){
-            for(Consultation c : clientHistory){
-                System.out.println("-Le " + c.getDate() + " à " + c.getHeure() + ", consultation avec " + c.getMedium().getDenomination());
-            }
+        for(Map.Entry<Medium, Integer> e : favouriteMediums.entrySet()){
+            System.out.println(" -" + e.getKey().getDenomination() + " : " + e.getValue() + " consultations");
         }
-        else{
-            System.out.println("Votre historique est vide... Vous avez pensé à voir nos médiums ?");
-        }
-
     }
 
     public static void displayProfilAstral(Client client){

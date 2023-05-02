@@ -58,7 +58,7 @@ public class MediumDao {
         return resultat;
     }
 
-    public List<Medium> sortMediumsByNumberOfConsultations(Client client){
+    public Map<Medium, Integer> sortMediumsByNumberOfConsultations(Client client){
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         String queryString = "select c.medium as m , count(c) as nb_consultation " +
@@ -66,13 +66,10 @@ public class MediumDao {
 
         TypedQuery<Object[]> query = em.createQuery(queryString, Object[].class);
         query.setParameter("client", client);
+
         List<Object[]> resultList = query.setMaxResults(3).getResultList();
-        List<Medium> mediumList = new ArrayList<Medium>();
-        for (Object[] objects : resultList) {
-            Medium m = (Medium) objects[0];
-            mediumList.add(m);
-        }
-        return mediumList;
+
+        return getMediumNbConsultations(resultList);
     }
 
     public Map<Medium,Integer> sortMediumsByNumberOfConsultations() {
@@ -84,16 +81,7 @@ public class MediumDao {
         TypedQuery<Object[]> query = em.createQuery(queryString,Object[].class);
 
         List<Object[]> resultList = query.getResultList();
-        Map<Medium,Integer> consultationNumberPerMedium = new HashMap<>();
-
-        for (Object[] objects : resultList ){
-            Medium m = (Medium) objects[0];
-            Integer nbConsultation = Math.toIntExact((Long) objects[1]);
-
-            consultationNumberPerMedium.put(m,nbConsultation);
-        }
-
-        return consultationNumberPerMedium;
+        return getMediumNbConsultations(resultList);
 
     }
 
@@ -104,5 +92,17 @@ public class MediumDao {
 
         TypedQuery<Medium> query = em.createQuery(queryString,Medium.class);
         return query.getResultList();
+    }
+
+    private Map<Medium, Integer> getMediumNbConsultations(List<Object[]> resultList) {
+        Map<Medium, Integer> favouriteMediums = new HashMap<>();
+
+        for (Object[] objects : resultList) {
+            Medium m = (Medium) objects[0];
+            Integer nbConsultation = Math.toIntExact((Long) objects[1]);
+
+            favouriteMediums.put(m, nbConsultation);
+        }
+        return favouriteMediums;
     }
 }

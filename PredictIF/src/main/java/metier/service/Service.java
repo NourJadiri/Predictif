@@ -402,17 +402,17 @@ public class Service {
         return resultat;
     }
 
-    public List<Medium> favouritesMediumsList(Client client) {
-        List<Medium> mediumList;
+    public Map<Medium, Integer> favouritesMediumsList(Client client) {
+        Map<Medium, Integer> favouriteMediums;
         JpaUtil.creerContextePersistance();
         try {
-            mediumList = mediumDao.sortMediumsByNumberOfConsultations(client);
+            favouriteMediums = mediumDao.sortMediumsByNumberOfConsultations(client);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             JpaUtil.fermerContextePersistance();
         }
-        return mediumList;
+        return favouriteMediums;
     }
 
 
