@@ -75,4 +75,13 @@ public class MediumDao {
         }
         return mediumList;
     }
+
+    public List<Medium> getAllMediums() {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "SELECT m from Medium m";
+
+        TypedQuery<Medium> query = em.createQuery(queryString,Medium.class);
+        return query.getResultList();
+    }
 }

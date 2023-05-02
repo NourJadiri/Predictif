@@ -165,13 +165,13 @@ public class Main {
                 System.out.println("CONNEXION");
                 System.out.println("---------");
 
-                while(client == null){
+                while (client == null) {
                     String mail = Saisie.lireChaine("Entrez votre adresse mail : ");
                     String mdp = Saisie.lireChaine("Entrez votre mot de passe : ");
 
                     client = sc.authentifierClientmail(mail, mdp);
 
-                    if(client == null){
+                    if (client == null) {
                         System.out.println("Client non trouvé, veuillez réessayer");
                     }
                 }
@@ -190,14 +190,14 @@ public class Main {
 
                 Message.envoyerNotification(consultation.getEmploye().getTelephone(), msgEmploye);
 
-                if (Saisie.lireInteger("1. Accepter \n 2. Refuser", choix) == 1){
+                if (Saisie.lireInteger("1. Accepter \n 2. Refuser", choix) == 1) {
                     sc.accepterConsultation(consultation);
 
                     String msgClient = "Bonjour " + client.getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
                             + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
                     Message.envoyerNotification(client.getNumTel(), msgClient);
 
-                    if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1.Oui \n 2.Non", choix) == 1){
+                    if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1.Oui \n 2.Non", choix) == 1) {
                         generatePrediction(client);
                     }
 
@@ -214,11 +214,6 @@ public class Main {
                 Client newClient = registerClient();
                 sc.inscriptionClient(newClient);
             }
-        } else if (choixInt == 2) {
-            System.out.println("Connexion : ");
-            //pareil que la connexion client je le ferai plus tard
-        } else {
-
         }
     }
 

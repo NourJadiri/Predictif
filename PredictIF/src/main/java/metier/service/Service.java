@@ -424,7 +424,12 @@ public class Service {
 
         return mediums;
     }
-
+    public List<Medium> getAllMediums() {
+        JpaUtil.creerContextePersistance();
+        List<Medium> mediumList = mediumDao.getAllMediums(); ;
+        JpaUtil.fermerContextePersistance();
+        return mediumList;
+    }
     protected ClientDao clientDao = new ClientDao();
     protected EmployeDao employeDao = new EmployeDao();
     protected ConsultationDao consultationDao = new ConsultationDao();
