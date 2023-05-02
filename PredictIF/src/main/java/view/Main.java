@@ -314,7 +314,13 @@ public class Main {
         Map<Medium, Integer> favouriteMediums = sc.favouritesMediumsList(client);
 
         for(Map.Entry<Medium, Integer> e : favouriteMediums.entrySet()){
-            System.out.println(" -" + e.getKey().getDenomination() + " : " + e.getValue() + " consultations");
+            System.out.print(" - " + e.getKey().getDenomination() + " : " + e.getValue());
+            if(favouriteMediums.size() == 1){
+                System.out.println(" consultation");
+            }
+            else if(favouriteMediums.size() > 1){
+                System.out.println(" consultations");
+            }
         }
     }
 
