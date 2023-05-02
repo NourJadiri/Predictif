@@ -157,9 +157,9 @@ public class Main {
         final int QUITTER = 3;
         System.out.println("Bonjour, bienvenue dans PREDICT'IF");
 
-        int choixInt = Saisie.lireInteger("Vous êtes un : \n 1. Client \n 2. Employe \n 3.Quitter l'application", choix);
         boolean appOpen = true;
         do{
+            int choixInt = Saisie.lireInteger("Vous êtes un : \n 1. Client \n 2. Employe \n 3.Quitter l'application", choix);
             switch(choixInt){
                 case CLIENT:
                     boolean activeUser;
