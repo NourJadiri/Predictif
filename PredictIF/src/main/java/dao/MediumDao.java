@@ -38,13 +38,11 @@ public class MediumDao {
             mediumGenderFilter += "1=1 ";
         }
 
-        if(!types.isEmpty()){
-            mediumGenderFilter += "AND";
-        }
 
         // filtre par type de médium
         // Si la liste est vide, on ne prend même pas le temps de filtrer par type
         if(!types.isEmpty()){
+            mediumGenderFilter += "AND";
             for (int i = 0 ; i < types.size() ; i++) {
                 mediumTypeFilter = mediumTypeFilter + " m.type_medium = \"" + types.get(i) + "\" ";
                 if(i < types.size() - 1){
