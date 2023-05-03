@@ -182,7 +182,7 @@ public class Service {
         }
     }
 
-    public Employe rechercherEmploye(Long employeId) {
+    public Employe rechercherEmployeParId(Long employeId) {
         JpaUtil.creerContextePersistance();
         Employe employe;
         try {
@@ -260,7 +260,7 @@ public class Service {
     //Le client demande une Consultation avec un medium cela va chercher un employe disponible pour creer une consultation.
     public Consultation demanderConsultation(Client client, Medium medium) {
         JpaUtil.creerContextePersistance();
-        Employe employe = employeDao.chercherEmployeDisponible(medium);
+        Employe employe = employeDao.findAvailableEmploye(medium);
         JpaUtil.fermerContextePersistance();
         return new Consultation(new Date(), new Date(), employe, client, medium); // la consultation n'a pas encore été accepté par l'employe mais on inittialise une consultation
     }
@@ -268,8 +268,15 @@ public class Service {
     public void accepterConsultation(Consultation consultation) {
         Employe employe = consultation.getEmploye();
         JpaUtil.creerContextePersistance();
+
         try {
             JpaUtil.ouvrirTransaction();
+
+            String msgClient = "Bonjour " + consultation.getClient().getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
+                        + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
+
+            Message.envoyerNotification(consultation.getClient().getNumTel(), msgClient);
+
             consultationDao.create(consultation);
             employe.setDispo(Employe.disponibilite.INDISPONIBLE);
             employeDao.updateDisponibilite(employe);

@@ -33,9 +33,13 @@ public class MediumDao {
         // Si le genre n'est pas "all" on rentre dans le filtre
         if(!genre.equals("all")){
             mediumGenderFilter = mediumGenderFilter + "m.genre = \"" + genre + "\" ";
-            if(!types.isEmpty()){
-                mediumGenderFilter += "AND";
-            }
+        }
+        else{
+            mediumGenderFilter += "1=1 ";
+        }
+
+        if(!types.isEmpty()){
+            mediumGenderFilter += "AND";
         }
 
         // filtre par type de médium
@@ -95,7 +99,7 @@ public class MediumDao {
     }
 
     private Map<Medium, Integer> getMediumNbConsultations(List<Object[]> resultList) {
-        Map<Medium, Integer> favouriteMediums = new HashMap<>();
+        Map<Medium, Integer> favouriteMediums = new LinkedHashMap<>();
 
         for (Object[] objects : resultList) {
             Medium m = (Medium) objects[0];

@@ -119,11 +119,12 @@ public class Main {
 
         Consultation consultation2 = sc.demanderConsultation(client1, medium2);
         sc.accepterConsultation(consultation2);
+
         Consultation consultation3 = sc.demanderConsultation(client1, medium3);
         sc.accepterConsultation(consultation3);
 
         // La consultation 1 est finie, l'employé sollicité redevient libre
-        sc.finConsultation(consultation1, "");
+        sc.finConsultation(consultation1, "Ceci est un commentaire");
 
         consultation1 = sc.demanderConsultation(client2, medium1);
         sc.accepterConsultation(consultation1);
@@ -132,19 +133,6 @@ public class Main {
         System.out.println(sc.favouritesMediumsList(client1));
     }
 
-    public static void testerConsultationsRecentes() {
-        Service sc = new Service();
-
-        List<Client> clients = sc.initClients();
-        List<Medium> mediums = sc.initMediums();
-
-        for (int i = 0; i < 5; i++) {
-            sc.demanderConsultation(clients.get(i), mediums.get(i));
-        }
-
-        // Ajout de la recherche des 5 consultations récentes
-
-    }
 
     public static void testerSaisie() {
         List<Integer> choix = new ArrayList<Integer>() {{

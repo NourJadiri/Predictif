@@ -147,73 +147,24 @@ public class Menu {
 
         Map<Medium, Integer> favouriteMediums = sc.favouritesMediumsList(client);
 
-        for(Map.Entry<Medium, Integer> e : favouriteMediums.entrySet()){
-            System.out.print(" - " + e.getKey().getDenomination() + " : " + e.getValue());
-            if(favouriteMediums.size() == 1){
-                System.out.println(" consultation");
-            }
-            else if(favouriteMediums.size() > 1){
-                System.out.println(" consultations");
-            }
-        }
+        displayMapContent(favouriteMediums);
+
     }
 
     public static void displayProfilAstral(Client client){
         System.out.println(client.getProfilAstral());
     }
 
-    /// INPUTS
-    public static String inputString (String label){
-        String s;
-
-        do{
-            s = Saisie.lireChaine(label + " : ");
-            if(s == null || s.isEmpty()){
-                System.err.println("Attention, champ renseigné invalide");
-            }
-        }while(s == null || s.isEmpty());
-
-        return s;
-    }
-    public static Date inputDate(String label){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date;
-
-        do {
-            String input = Saisie.lireChaine(label + " : ");
-
-            try {
-                date = dateFormat.parse(input);
-            } catch (Exception e) {
-                date = null;
-                System.out.println("Format de date invalide, merci d'utiliser le format suivant dd/MM/yyyy.");
-            }
-        } while (date == null);
-
-        return date;
-    }
-    public static String inputMail(){
-        String mail;
-        String yesOrNo = "oui";
-        Client test = null;
-        Service sc = new Service();
-        do{
-            mail = inputString("Veuillez entrer votre mail");
-            test = sc.rechercherClientparMail(mail);
-
-            if(test != null){
-                System.out.println("Ce mail existe déjà dans notre base de donnée.. Peut être voulez vous vous connecter ?");
-                do{
-                    System.out.println("oui/non");
-                    yesOrNo = Saisie.lireChaine("");
-                }while(!yesOrNo.equals("oui") && !yesOrNo.equals("non"));
-            }
-        }while(test != null && yesOrNo == "non");
-
-        return mail;
-    }
 
     /// CHOIX DU MEDIUM
+    public static void displayMediumList(List<Medium> mediumList){
+        System.out.println("Les médiums qui répondent à vos filtres sont : ");
+        for (int i = 0 ; i < mediumList.size() ; i++) {
+            System.out.println((i+1) + ". " + mediumList.get(i).getDenomination());
+            System.out.println(mediumList.get(i).getPresentation());
+        }
+    }
+
     public static Medium chooseMedium(){
         Service sc = new Service();
 
@@ -242,26 +193,60 @@ public class Menu {
 
         return medium;
     }
+
     public static ArrayList<String> chooseMediumType(){
         LinkedList<String> types = new LinkedList<>();
         types.add("Astrologue");
         types.add("Cartomancien");
         types.add("Spirite");
-        types.add("Tout");
+        types.add("Aucune préférence");
 
         ArrayList<String> typesChosen = new ArrayList<>();
+        Integer keepFiltering = 1;
+        Integer type = 99;
 
-        System.out.println("Quel type de médium voulez vous consulter ?");
-        for(int i = 0 ; i < types.size() ; i++){
-            System.out.println((i+1) + ". " + types.get(i));
+        while(keepFiltering == 1 && type != types.indexOf("Aucune préférence") + 1){
+
+            System.out.println("Filtres :");
+            for(int i = 0 ; i < types.size() ; i++){
+                System.out.println((i+1) + " ." + types.get(i));
+            }
+
+            List<Integer> choixPossibles = new ArrayList<>();
+
+            for(int i = 0 ; i < types.size() ; i++){
+                choixPossibles.add(i + 1);
+            }
+
+            type = Saisie.lireInteger("Votre choix, client...", choixPossibles);
+
+            String chosenType;
+
+            if(type != types.indexOf("Aucune préférence") + 1){
+
+                chosenType = types.get(type - 1);
+
+                typesChosen.add(chosenType);
+                types.remove(chosenType);
+            }
+            else{
+                // Si le client choisit au final de n'avoir aucune préférence on lui laisse pas les anciens filtres
+                typesChosen.removeAll(typesChosen);
+                chosenType = "Tout";
+                keepFiltering = 2;
+            }
+
+            System.out.println("Vous avez choisi : " + chosenType);
+
+            if(keepFiltering != 2){
+                keepFiltering = Saisie.lireInteger("Voulez vous rajouter un nouveau filtre de type ?\n 1. Oui \n 2. Non" , Arrays.asList(1,2));
+            }
         }
-
-        Integer type = Saisie.lireInteger("");
-        typesChosen.add(types.get(type - 1));
 
 
         return typesChosen;
     }
+
     public static String chooseMediumGender(){
         String[] genders = {"H" , "F", "all"};
         System.out.println("Avez vous des préférences pour un genre en particulier ?");
@@ -273,13 +258,7 @@ public class Menu {
 
         return genders[genderIndex - 1];
     }
-    public static void displayMediumList(List<Medium> mediumList){
-        System.out.println("Les médiums qui répondent à vos filtres sont : ");
-        for (int i = 0 ; i < mediumList.size() ; i++) {
-            System.out.println((i+1) + ". " + mediumList.get(i).getDenomination());
-            System.out.println(mediumList.get(i).getPresentation());
-        }
-    }
+
     public static List<Integer> possibleMediumIndexes(List<Medium> mediumList){
         List<Integer> r = new ArrayList<>();
 
@@ -360,9 +339,8 @@ public class Menu {
 
         Map<Medium, Integer> consultationsPerMedium = sc.afficherRepartitionConsultationParMedium();
 
-        for(Map.Entry<Medium, Integer> e : consultationsPerMedium.entrySet() ){
-            System.out.println(" -" + e.getKey() + " : " + e.getValue());
-        }
+        displayMapContent(consultationsPerMedium);
+
     }
 
     public static void displayTopFiveMediums(){
@@ -373,17 +351,31 @@ public class Menu {
 
         Map<Medium, Integer> consultationsPerMedium = sc.afficherRepartitionConsultationParMedium();
 
-        Set<Map.Entry<Medium, Integer>> entrySet = consultationsPerMedium.entrySet();
-
         int count = 0;
 
-        System.out.println("Vos cinq médiums les plus consultés");
+        System.out.println("Les cinq médiums les plus consultés");
 
-        for(Map.Entry<Medium, Integer> e : consultationsPerMedium.entrySet()){
-            if(count < 5){
-                System.out.println(" -" + e.getKey() + " : " + e.getValue());
-                count++;
+        Iterator<Map.Entry<Medium, Integer>> itr = consultationsPerMedium.entrySet().iterator();
+
+        if(consultationsPerMedium.isEmpty()){
+            System.out.println("Aucun médium n'a encore été consulté");
+        }
+
+        while (itr.hasNext() && count < 5) {
+            Map.Entry<Medium, Integer> entry = itr.next();
+
+            Medium m = entry.getKey();
+            Integer nbConsultations = entry.getValue();
+
+            System.out.print(" -" + m + " : " + nbConsultations);
+
+            if(nbConsultations > 1){
+                System.out.println(" consultations");
             }
+            else if (nbConsultations == 1){
+                System.out.println(" consultation");
+            }
+            count++;
         }
 
     }
@@ -391,22 +383,18 @@ public class Menu {
     public static void displayClientRepartition(){
         Service sc = new Service();
 
-        Client client = null;
+        Map<Employe, Integer> clientPerEmploye = sc.afficherRepartitionClientParEmploye();
 
-        boolean loop = true;
+        Iterator<Map.Entry<Employe, Integer>> iter = clientPerEmploye.entrySet().iterator();
 
-        while(loop && client == null){
-
-            Long id = Long.valueOf(Saisie.lireInteger("Saisissez l'id du client souhaité"));
-            client = sc.rechercherClientparId(id);
-
-            if(client == null){
-                System.err.println("Aucun client avec l'id " + id + " n'est présent dans votre base de donnée");
-                System.err.println("Veuillez réessayer svp...");
-            }
+        while(iter.hasNext()){
+            Map.Entry<Employe, Integer> entry = iter.next();
+            Employe e = entry.getKey();
+            Integer nbClients = entry.getValue();
+            System.out.println(" -" + e.getPrenom() + " " + e.getNom() + " : " + nbClients);
         }
-
     }
+
     /// REPONSE EMPLOYE
     public static void alertEmploye(Consultation consultation){
         String msgEmploye = "Bonjour " + consultation.getEmploye().getPrenom() +
@@ -415,6 +403,7 @@ public class Menu {
 
         Message.envoyerNotification(consultation.getEmploye().getTelephone(), msgEmploye);
     }
+
     public static void generatePrediction(Client client){
         List<Integer> notes = Arrays.asList(1,2,3,4);
         List<String> prediction;
@@ -429,6 +418,7 @@ public class Menu {
         System.out.println("Prediction Travail : " + prediction.get(2));
 
     }
+
     /// CONSULTATION
     public static void startConsultationProcess(Client client){
         List<Integer> choix = new ArrayList<Integer>() {{
@@ -445,11 +435,8 @@ public class Menu {
         alertEmploye(consultation);
 
         if (Saisie.lireInteger("1. Accepter \n2. Refuser", choix) == 1){
-            sc.accepterConsultation(consultation);
 
-            String msgClient = "Bonjour " + client.getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
-                    + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
-            Message.envoyerNotification(client.getNumTel(), msgClient);
+            sc.accepterConsultation(consultation);
 
             if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1.Oui \n 2.Non", choix) == 1){
                 generatePrediction(client);
@@ -459,5 +446,73 @@ public class Menu {
 
             sc.finConsultation(consultation, commentaire);
         }
+    }
+
+    /// UTIL
+    private static void displayMapContent(Map<Medium, Integer> consultationsPerMedium) {
+        Iterator<Map.Entry<Medium, Integer>> iter = consultationsPerMedium.entrySet().iterator();
+
+        while(iter.hasNext()){
+            Map.Entry<Medium, Integer> entry = iter.next();
+            System.out.print(" - " + entry.getKey().getDenomination() + " : " + entry.getValue());
+            if(consultationsPerMedium.size() == 1){
+                System.out.println(" consultation");
+            }
+            else if(consultationsPerMedium.size() > 1){
+                System.out.println(" consultations");
+            }
+        }
+    }
+
+    public static String inputString (String label){
+        String s;
+
+        do{
+            s = Saisie.lireChaine(label + " : ");
+            if(s == null || s.isEmpty()){
+                System.err.println("Attention, champ renseigné invalide");
+            }
+        }while(s == null || s.isEmpty());
+
+        return s;
+    }
+
+    public static Date inputDate(String label){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date;
+
+        do {
+            String input = Saisie.lireChaine(label + " : ");
+
+            try {
+                date = dateFormat.parse(input);
+            } catch (Exception e) {
+                date = null;
+                System.out.println("Format de date invalide, merci d'utiliser le format suivant dd/MM/yyyy.");
+            }
+        } while (date == null);
+
+        return date;
+    }
+
+    public static String inputMail(){
+        String mail;
+        String yesOrNo = "oui";
+        Client test = null;
+        Service sc = new Service();
+        do{
+            mail = inputString("Veuillez entrer votre mail");
+            test = sc.rechercherClientparMail(mail);
+
+            if(test != null){
+                System.out.println("Ce mail existe déjà dans notre base de donnée.. Peut être voulez vous vous connecter ?");
+                do{
+                    System.out.println("oui/non");
+                    yesOrNo = Saisie.lireChaine("");
+                }while(!yesOrNo.equals("oui") && !yesOrNo.equals("non"));
+            }
+        }while(test != null && yesOrNo == "non");
+
+        return mail;
     }
 }

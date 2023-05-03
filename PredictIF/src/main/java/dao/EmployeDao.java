@@ -5,7 +5,7 @@
  */
 package dao;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
@@ -65,7 +65,7 @@ public class EmployeDao {
         TypedQuery<Object[]> query = em.createQuery(queryString, Object[].class);
 
         List<Object[]> resultList = query.getResultList();
-        Map<Employe,Integer> consultationNumberPerEmployee = new HashMap<>();
+        Map<Employe,Integer> consultationNumberPerEmployee = new LinkedHashMap<>();
 
         for (Object[] objects : resultList ){
             Employe e = (Employe) objects[0];
@@ -77,7 +77,7 @@ public class EmployeDao {
         return consultationNumberPerEmployee;
     }
 
-    public Employe chercherEmployeDisponible(Medium medium) {
+    public Employe findAvailableEmploye(Medium medium) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         String queryString = "SELECT e, count(c) as nb_consultation from Employe e " +
@@ -89,8 +89,6 @@ public class EmployeDao {
         query.setParameter("genreMedium", medium.getGenre());
         query.setParameter("disponible", Employe.disponibilite.DISPONIBLE);
 
-        // TODO : peut être faire une gestion d'erreur si pas d'employé disponible
-        //         mais je pense pas car ceux qui seront affichés sur l'ihm seront forcement disponible
         List<Object[]> resultList = query.setMaxResults(1).getResultList();
 
         return (Employe) resultList.get(0)[0];
