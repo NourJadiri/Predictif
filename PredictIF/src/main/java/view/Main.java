@@ -26,25 +26,9 @@ public class Main {
      */
     public static void main(String[] args) {
         JpaUtil.creerFabriquePersistance();
-        //testerInscriptionClient();
-        //testerInscriptionEmploye();
-        //testerAjoutConsultation();
-        //testerAjoutMedium();
-
-
         initDb();
-        testerSaisie();
+        lancerApplication();
         JpaUtil.fermerFabriquePersistance();
-    }
-
-    public static void testerAfficherRepartitionClient(){
-        Service sc = new Service();
-        System.out.println(sc.afficherRepartitionClientParEmploye());
-    }
-    public static void getPredction(){
-        Service sc = new Service();
-
-        System.out.println(sc.demanderPrediction("Jaune", "Chien", 2, 3 ,4));
     }
 
     public static void initDb() {
@@ -52,6 +36,21 @@ public class Main {
         sc.initEmployes();
         sc.initClients();
         sc.initMediums();
+    }
+    public static void testerAfficherRepartitionClient(){
+        Service sc = new Service();
+        System.out.println(sc.afficherRepartitionClientParEmploye());
+    }
+
+    public static void testerPredction(){
+        Service sc = new Service();
+
+        System.out.println(sc.demanderPrediction("Jaune", "Chien", 2, 3 ,4));
+    }
+
+    public static void testerRechercheParNom(){
+        Service sc = new Service();
+        System.out.println(sc.rechercherMediumParNom("Gana"));
     }
 
     public static void testerInscriptionClient() {
@@ -134,7 +133,7 @@ public class Main {
     }
 
 
-    public static void testerSaisie() {
+    public static void lancerApplication() {
         List<Integer> choix = new ArrayList<Integer>() {{
             add(1);
             add(2);

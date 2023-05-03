@@ -393,6 +393,24 @@ public class Service {
         return medium;
     }
 
+    public List<Medium> rechercherMediumParNom(String name){
+        JpaUtil.creerContextePersistance();
+        List<Medium> mediums;
+
+        try{
+            mediums = mediumDao.findByName(name);
+        }
+        catch( Exception ex ){
+            mediums = null;
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            JpaUtil.fermerContextePersistance();
+        }
+
+        return mediums;
+    }
+
     public List<Medium> filtrerMediums(String genre, ArrayList<String> types) {
         List<Medium> resultat;
 

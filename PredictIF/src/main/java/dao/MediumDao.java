@@ -19,6 +19,20 @@ public class MediumDao {
         return em.find(Medium.class , mediumId);
     }
 
+    public List<Medium> findByName(String name){
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "SELECT m from Medium m " +
+                "WHERE m.denomination LIKE :name";
+
+        TypedQuery<Medium> query = em.createQuery(queryString, Medium.class);
+        query.setParameter("name" , "%" + name + "%");
+
+        List<Medium> resultat = query.getResultList();
+
+        return resultat;
+    }
+
     public List<Medium> filter(String genre , ArrayList<String> types){
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
