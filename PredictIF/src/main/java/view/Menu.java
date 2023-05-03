@@ -131,10 +131,12 @@ public class Menu {
     public static void displayFiveLastConsultations(Client client){
         Service sc = new Service();
         List<Consultation> recentConsultations = sc.listerConsultationsRecente(client);
-
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
         if(recentConsultations.size() != 0){
             for(Consultation c : recentConsultations){
-                System.out.println("-Le " + c.getDate() + " à " + c.getHeure() + ", consultation avec " + c.getMedium().getDenomination());
+                System.out.println("-Le " + dateFormat.format(c.getDate()) +
+                        " à " + timeFormat.format(c.getDate()) + ", consultation avec " + c.getMedium().getDenomination());
             }
         }
         else{

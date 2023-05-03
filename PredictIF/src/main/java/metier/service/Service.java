@@ -7,9 +7,12 @@ package metier.service;
 
 import dao.*;
 import metier.modele.*;
+import org.apache.commons.logging.impl.SimpleLog;
 import util.AstroNetApi;
 import util.Message;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -225,12 +228,42 @@ public class Service {
         Employe employe3 = new Employe("Williams", "Bob", 'H', "555-9012", "bobwilliams@example.com", "password3");
         Employe employe4 = new Employe("Lee", "Sarah", 'F', "555-3456", "sarahlee@example.com", "password4");
         Employe employe5 = new Employe("Davis", "Mike", 'H', "555-7890", "mikedavis@example.com", "password5");
+        Employe employe6 = new Employe("Garcia", "Maria", 'F', "555-2345", "mariagarcia@example.com", "password6");
+        Employe employe7 = new Employe("Brown", "David", 'H', "555-6789", "davidbrown@example.com", "password7");
+        Employe employe8 = new Employe("Wilson", "Karen", 'F', "555-0123", "karenwilson@example.com", "password8");
+        Employe employe9 = new Employe("Taylor", "Chris", 'H', "555-4567", "christaylor@example.com", "password9");
+        Employe employe10 = new Employe("Anderson", "Linda", 'F', "555-8901", "lindaanderson@example.com", "password10");
+        Employe employe11 = new Employe("Jackson", "Mark", 'H', "555-2345", "markjackson@example.com", "password11");
+        Employe employe12 = new Employe("White", "Emily", 'F', "555-6789", "emilywhite@example.com", "password12");
+        Employe employe13 = new Employe("Martin", "Tom", 'H', "555-0123", "tommartin@example.com", "password13");
+        Employe employe14 = new Employe("Thompson", "Jessica", 'F', "555-4567", "jessicathompson@example.com", "password14");
+        Employe employe15 = new Employe("Clark", "Richard", 'H', "555-8901", "richardclark@example.com", "password15");
+        Employe employe16 = new Employe("Wright", "Amy", 'F', "555-2345", "amywright@example.com", "password16");
+        Employe employe17 = new Employe("Perez", "Juan", 'H', "555-6789", "juanperez@example.com", "password17");
+        Employe employe18 = new Employe("Turner", "Kevin", 'H', "555-0123", "kevinturner@example.com", "password18");
+        Employe employe19 = new Employe("Phillips", "Sara", 'F', "555-4567", "saraphillips@example.com", "password19");
+        Employe employe20 = new Employe("Campbell", "Peter", 'H', "555-8901", "petercampbell@example.com", "password20");
 
         employes.add(employe1);
         employes.add(employe2);
         employes.add(employe3);
         employes.add(employe4);
         employes.add(employe5);
+        employes.add(employe6);
+        employes.add(employe7);
+        employes.add(employe8);
+        employes.add(employe9);
+        employes.add(employe10);
+        employes.add(employe11);
+        employes.add(employe12);
+        employes.add(employe13);
+        employes.add(employe14);
+        employes.add(employe15);
+        employes.add(employe16);
+        employes.add(employe17);
+        employes.add(employe18);
+        employes.add(employe19);
+        employes.add(employe20);
 
         for (Employe e : employes) {
             JpaUtil.creerContextePersistance();
@@ -262,6 +295,7 @@ public class Service {
         JpaUtil.creerContextePersistance();
         Employe employe = employeDao.findAvailableEmploye(medium);
         JpaUtil.fermerContextePersistance();
+
         return new Consultation(new Date(), new Date(), employe, client, medium); // la consultation n'a pas encore été accepté par l'employe mais on inittialise une consultation
     }
 
