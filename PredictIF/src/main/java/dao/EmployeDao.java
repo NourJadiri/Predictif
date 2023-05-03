@@ -59,7 +59,7 @@ public class EmployeDao {
     public Map<Employe, Integer> sortEmployeByClientNumber(){
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
-        String queryString = "SELECT c.employe as employe, count(c) as nb_client " +
+        String queryString = "SELECT c.employe as employe, count(DISTINCT c) as nb_client " +
                 "FROM Consultation c " +
                 "GROUP BY c.employe ORDER BY nb_client desc";
         TypedQuery<Object[]> query = em.createQuery(queryString, Object[].class);
