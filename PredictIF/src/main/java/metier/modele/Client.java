@@ -45,12 +45,7 @@ public class Client {
         this.mail = mail;
         this.numTel = numTel;
         this.motDePasse = motDePasse;
-
-        try {
-            this.profilAstral = new ProfilAstral(prenom, dateNaissance);
-        } catch (Exception ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.profilAstral = null;
     }
 
     
@@ -116,6 +111,10 @@ public class Client {
 
     public ProfilAstral getProfilAstral() {
         return profilAstral;
+    }
+
+    public void setProfilAstral(ProfilAstral profilAstral) {
+        this.profilAstral = profilAstral;
     }
 
     @Override

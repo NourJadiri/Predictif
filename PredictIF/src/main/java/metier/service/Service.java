@@ -7,12 +7,9 @@ package metier.service;
 
 import dao.*;
 import metier.modele.*;
-import org.apache.commons.logging.impl.SimpleLog;
 import util.AstroNetApi;
 import util.Message;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,10 +49,11 @@ public class Service {
 
         // Variable de retour
         Long res;
-        JpaUtil.creerContextePersistance();
 
         try {
+            JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
+            client.setProfilAstral(new ProfilAstral(client.getPrenom(),client.getDateNaissance()));
             clientDao.create(client);
             JpaUtil.validerTransaction();
             res = client.getId();
@@ -292,18 +290,34 @@ public class Service {
      */
     //Le client demande une Consultation avec un medium cela va chercher un employe disponible pour creer une consultation.
     public Consultation demanderConsultation(Client client, Medium medium) {
-        JpaUtil.creerContextePersistance();
-        Employe employe = employeDao.findAvailableEmploye(medium);
-        JpaUtil.fermerContextePersistance();
+        Consultation consultation;
+        try {
+            JpaUtil.creerContextePersistance();
+            Employe employe = employeDao.findAvailableEmploye(medium);
+            consultation = new Consultation(new Date(), new Date(), employe, client, medium); // la consultation n'a pas encore été accepté par l'employe mais on inittialise une consultation
+            JpaUtil.ouvrirTransaction();
+            consultationDao.create(consultation);
+            JpaUtil.validerTransaction();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+        return consultation;
+    }
 
-        return new Consultation(new Date(), new Date(), employe, client, medium); // la consultation n'a pas encore été accepté par l'employe mais on inittialise une consultation
+    public List<Consultation> getConsultationsEnAttente(Employe employe) {
+        JpaUtil.creerContextePersistance();
+        List<Consultation> consultationList = employeDao.getConsultations(employe);
+        JpaUtil.fermerContextePersistance();
+        return consultationList;
     }
 
     public void accepterConsultation(Consultation consultation) {
         Employe employe = consultation.getEmploye();
-        JpaUtil.creerContextePersistance();
 
         try {
+            JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
 
             String msgClient = "Bonjour " + consultation.getClient().getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
@@ -311,7 +325,9 @@ public class Service {
 
             Message.envoyerNotification(consultation.getClient().getNumTel(), msgClient);
 
-            consultationDao.create(consultation);
+
+            consultation.setEtatConsultation(Consultation.etat.EN_COURS);
+            consultationDao.updateEtatConsultation(consultation);
             employe.setDispo(Employe.disponibilite.INDISPONIBLE);
             employeDao.updateDisponibilite(employe);
             JpaUtil.validerTransaction();
@@ -361,14 +377,14 @@ public class Service {
     public void finConsultation(Consultation consultation, final String commentaire) {
         Employe employe = consultation.getEmploye();
         consultation.setCommentaire(commentaire);
-        consultation.setConsultationTerminee(true);
+        consultation.setEtatConsultation(Consultation.etat.TERMINEE);
         employe.setDispo(Employe.disponibilite.DISPONIBLE);
         JpaUtil.creerContextePersistance();
         try {
             JpaUtil.ouvrirTransaction();
             employeDao.updateDisponibilite(employe);
             consultationDao.updateCommentaire(consultation);
-            consultationDao.updateConsultationClose(consultation);
+            consultationDao.updateEtatConsultation(consultation);
             JpaUtil.validerTransaction();
         }
         catch (Exception e1) {

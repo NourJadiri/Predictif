@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+
+import metier.modele.Consultation;
 import metier.modele.Employe;
 import metier.modele.Medium;
 
@@ -94,4 +96,13 @@ public class EmployeDao {
         return (Employe) resultList.get(0)[0];
     }
 
+    public List<Consultation> getConsultations(Employe employe) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+        String queryString = "SELECT c from Consultation c WHERE c.employe = :employe and c.etatConsultation = :etatConsultation" ;
+
+        TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
+        query.setParameter("employe",employe);
+        query.setParameter("etatConsultation", Consultation.etat.EN_ATTENTE);
+        return query.getResultList();
+    }
 }

@@ -313,7 +313,8 @@ public class Menu {
                 "\n 1. Voir le nombre de consultations par medium" +
                 "\n 2. Voir le top 5 des médiums choisis par les clients" +
                 "\n 3. Voir la répartition des clients par employe" +
-                "\n 4. Vous deconnecter", Arrays.asList(1,2,3,4));
+                "\n 4. Voir vos consultations en attentes" +
+                "\n 5. Vous deconnecter", Arrays.asList(1,2,3,4,5));
 
         switch (choixEmploye){
             case 1:
@@ -325,6 +326,8 @@ public class Menu {
             case 3:
                 displayClientRepartition();
                 break;
+            case 4:
+                startAcceptConsultations(employe);
             default:
                 loop = false;
                 break;
@@ -398,12 +401,48 @@ public class Menu {
     }
 
     /// REPONSE EMPLOYE
+
     public static void alertEmploye(Consultation consultation){
         String msgEmploye = "Bonjour " + consultation.getEmploye().getPrenom() +
                 ". Consultation requise pour " + consultation.getClient().getPrenom() +
                 " " + consultation.getClient().getNom() + ".\n Médium à incarner : " + consultation.getMedium().getDenomination();
 
         Message.envoyerNotification(consultation.getEmploye().getTelephone(), msgEmploye);
+    }
+    private static void startAcceptConsultations(Employe employe) {
+        Service sc = new Service();
+        List<Integer> choix = new ArrayList<Integer>() {{
+            add(1);
+            add(2);
+        }};
+        List<Consultation> consultationList = sc.getConsultationsEnAttente(employe);
+        List<Integer> choixconsultation = new ArrayList<Integer>() {{
+            for (int i = 0; i < consultationList.size(); i++) {
+                add(i+1);
+            }
+        }};
+        StringBuilder s = new StringBuilder();
+        System.out.println("Prendre une de vos consultations en attente :\n");
+        for (Consultation consultation : consultationList) {
+            s.append(consultationList.indexOf(consultation) + 1).append(". Client : ").append(consultation.getClient().getPrenom()).append(" ").append(consultation.getClient().getNom()).append(" Medium : ").append(consultation.getMedium().getDenomination()).append("\n");
+        }
+        System.out.println(consultationList);
+        System.out.println(choixconsultation);
+        Consultation consultation = consultationList.get(Saisie.lireInteger(String.valueOf(s), choixconsultation)-1);
+
+
+        if (Saisie.lireInteger("1. Accepter \n2. Refuser", choix) == 1){
+
+            sc.accepterConsultation(consultation);
+
+            if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1.Oui \n 2.Non", choix) == 1){
+                generatePrediction(consultation.getClient());
+            }
+
+            String commentaire = Saisie.lireChaine("Un commentaire pour vos collègues : ");
+
+            sc.finConsultation(consultation, commentaire);
+        }
     }
 
     public static void generatePrediction(Client client){
@@ -423,32 +462,16 @@ public class Menu {
 
     /// CONSULTATION
     public static void startConsultationProcess(Client client){
-        List<Integer> choix = new ArrayList<Integer>() {{
-            add(1);
-            add(2);
-        }};
+
 
         Service sc = new Service();
         Medium medium = chooseMedium();
 
         Consultation consultation = sc.demanderConsultation(client, medium);
-
-        /// Section employé
         alertEmploye(consultation);
-
-        if (Saisie.lireInteger("1. Accepter \n2. Refuser", choix) == 1){
-
-            sc.accepterConsultation(consultation);
-
-            if (Saisie.lireInteger("En panne d'inspiration ? Obtenez trois predictions\n 1.Oui \n 2.Non", choix) == 1){
-                generatePrediction(client);
-            }
-
-            String commentaire = Saisie.lireChaine("Un commentaire pour vos collègues : ");
-
-            sc.finConsultation(consultation, commentaire);
-        }
     }
+
+
 
     /// UTIL
     private static void displayMapContent(Map<Medium, Integer> consultationsPerMedium) {

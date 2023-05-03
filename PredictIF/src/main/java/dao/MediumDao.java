@@ -37,7 +37,6 @@ public class MediumDao {
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         List<Medium> resultat;
-
         String queryBase = "SELECT m FROM Medium m WHERE ";
 
         String mediumGenderFilter = "";
@@ -66,11 +65,9 @@ public class MediumDao {
         }
 
         String queryString = queryBase + mediumGenderFilter + mediumTypeFilter;
-
         TypedQuery<Medium> query = em.createQuery(queryString , Medium.class);
 
         resultat = query.getResultList();
-
         return resultat;
     }
 

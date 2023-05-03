@@ -5,6 +5,11 @@ import java.util.Date;
 
 @Entity
 public class Consultation {
+
+    public enum etat{
+        EN_ATTENTE, EN_COURS, TERMINEE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -21,7 +26,8 @@ public class Consultation {
 
     private String commentaire;
 
-    private Boolean consultationTerminee;
+    @Enumerated(EnumType.ORDINAL)
+    private etat etatConsultation;
 
     public Consultation() {
     }
@@ -33,7 +39,7 @@ public class Consultation {
         this.client = client;
         this.medium = medium;
         this.commentaire = "";
-        this.consultationTerminee = false;
+        this.etatConsultation = etat.EN_ATTENTE;
     }
 
     public Date getDate() {
@@ -84,12 +90,12 @@ public class Consultation {
         this.medium = medium;
     }
 
-    public Boolean getConsultationTerminee() {
-        return consultationTerminee;
+    public etat getEtatConsultation() {
+        return etatConsultation;
     }
 
-    public void setConsultationTerminee(Boolean consultationClose) {
-        this.consultationTerminee = consultationClose;
+    public void setEtatConsultation(etat etatConsultation) {
+        this.etatConsultation = etatConsultation;
     }
 
     @Override

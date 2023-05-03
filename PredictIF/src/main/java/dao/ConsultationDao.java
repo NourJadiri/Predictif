@@ -54,14 +54,14 @@ public class ConsultationDao {
         query.executeUpdate();
     }
 
-    public void updateConsultationClose(Consultation consultation) {
+    public void updateEtatConsultation(Consultation consultation) {
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
-        String queryString = "UPDATE Consultation SET consultationTerminee = :consultationClose " +
+        String queryString = "UPDATE Consultation SET etatConsultation = :etatConsultation " +
                 "WHERE id = :consultationId";
 
         TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
-        query.setParameter("consultationClose", consultation.getConsultationTerminee());
+        query.setParameter("etatConsultation", consultation.getEtatConsultation());
         query.setParameter("consultationId", consultation.getId());
         query.executeUpdate();
     }

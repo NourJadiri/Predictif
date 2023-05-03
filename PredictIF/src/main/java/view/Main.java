@@ -5,7 +5,6 @@
  */
 package view;
 
-import util.Message;
 import util.Saisie;
 
 import dao.JpaUtil;
@@ -13,7 +12,6 @@ import dao.JpaUtil;
 import metier.modele.*;
 import metier.service.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -26,7 +24,7 @@ public class Main {
      */
     public static void main(String[] args) {
         JpaUtil.creerFabriquePersistance();
-        initDb();
+        //initDb();
         lancerApplication();
         JpaUtil.fermerFabriquePersistance();
     }
@@ -99,39 +97,6 @@ public class Main {
             System.out.println(m);
         }
     }
-
-    public static void testerAjoutConsultation() {
-        Service sc = new Service();
-
-        Client client1 = sc.rechercherClientparId(6L);
-        Client client2 = sc.rechercherClientparId(7L);
-        Medium medium1 = sc.rechercherMediumParId(13L);
-        Medium medium2 = sc.rechercherMediumParId(14L);
-        Medium medium3 = sc.rechercherMediumParId(11L);
-
-        // Le client demande une consultation, une nouvelle consultation est créée
-        System.out.println(client1.getPrenom() + " demande une consultation avec " + medium1.getDenomination());
-        Consultation consultation1 = sc.demanderConsultation(client1, medium1);
-        System.out.println(consultation1.getEmploye().getPrenom() + " est l'employé sollicité !");
-        // La consultation se fait accepter
-        sc.accepterConsultation(consultation1);
-
-        Consultation consultation2 = sc.demanderConsultation(client1, medium2);
-        sc.accepterConsultation(consultation2);
-
-        Consultation consultation3 = sc.demanderConsultation(client1, medium3);
-        sc.accepterConsultation(consultation3);
-
-        // La consultation 1 est finie, l'employé sollicité redevient libre
-        sc.finConsultation(consultation1, "Ceci est un commentaire");
-
-        consultation1 = sc.demanderConsultation(client2, medium1);
-        sc.accepterConsultation(consultation1);
-
-        sc.listerConsultationsRecente(client1);
-        System.out.println(sc.favouritesMediumsList(client1));
-    }
-
 
     public static void lancerApplication() {
         List<Integer> choix = new ArrayList<Integer>() {{
