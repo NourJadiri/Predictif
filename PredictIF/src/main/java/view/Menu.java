@@ -241,6 +241,7 @@ public class Menu {
 
                 typesChosen.add(chosenType);
                 types.remove(chosenType);
+                type = 99;
             }
             else{
                 // Si le client choisit au final de n'avoir aucune préférence on lui laisse pas les anciens filtres
