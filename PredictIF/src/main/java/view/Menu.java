@@ -60,9 +60,10 @@ public class Menu {
         Integer action = Saisie.lireInteger("Veuillez saisir l'action que vous voulez effectuer : " +
                 "\n1. Demander une consultation" +
                 "\n2. Voir vos cinq dernieres consultations" +
-                "\n3. Voir votre liste de mediums préférés" +
-                "\n4. Visualiser votre profil astral" +
-                "\n5. Vous deconnecter", Arrays.asList(1,2,3,4,5));
+                "\n3. Voir vos consultations en attente" +
+                "\n4. Voir votre liste de mediums préférés" +
+                "\n5. Visualiser votre profil astral" +
+                "\n6. Vous deconnecter", Arrays.asList(1,2,3,4,5,6));
 
         switch(action){
             case 1:
@@ -72,9 +73,12 @@ public class Menu {
                 displayFiveLastConsultations(client);
                 break;
             case 3:
-                displayClientFavMediums(client);
+                displayPendingConsultations(client);
                 break;
             case 4:
+                displayClientFavMediums(client);
+                break;
+            case 5:
                 displayProfilAstral(client);
                 break;
             default:
@@ -147,7 +151,8 @@ public class Menu {
         if(!recentConsultations.isEmpty()){
             for(Consultation c : recentConsultations){
                 System.out.println("-Le " + dateFormat.format(c.getDate()) +
-                        " à " + timeFormat.format(c.getDate()) + ", consultation avec " + c.getMedium().getDenomination());
+                        " à " + timeFormat.format(c.getDate()) + ", consultation avec " + c.getMedium().getDenomination()
+                + ". Etat : " + c.getEtatConsultation().name());
             }
         }
         else{
@@ -166,6 +171,19 @@ public class Menu {
 
     public static void displayProfilAstral(Client client){
         System.out.println(client.getProfilAstral());
+    }
+
+    public static void displayPendingConsultations(Client client){
+        Service sc = new Service();
+        System.out.println();
+        System.out.println("Vos consultations en attente");
+        System.out.println("----------------------------");
+
+        List<Consultation> pendingConsultations = sc.getConsultationsEnAttente(client);
+
+        for(Consultation c : pendingConsultations){
+            System.out.println("Consultation avec " + c.getMedium().getDenomination());
+        }
     }
 
 

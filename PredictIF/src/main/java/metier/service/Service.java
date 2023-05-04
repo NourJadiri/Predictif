@@ -143,9 +143,9 @@ public class Service {
 
     public List<Consultation> getHistoriqueClient(Client client){
         List<Consultation> historiqueClient;
-        JpaUtil.creerContextePersistance();
 
         try{
+            JpaUtil.creerContextePersistance();
             historiqueClient = consultationDao.getConsultationHistory(client);
         }catch(Exception ex){
             historiqueClient = null;
@@ -155,6 +155,22 @@ public class Service {
         }
 
         return historiqueClient;
+    }
+
+    public List<Consultation> getConsultationsEnAttente(Client client){
+        List<Consultation> pendingConsultations;
+
+        try{
+            JpaUtil.creerContextePersistance();
+            pendingConsultations = consultationDao.getPendingConsultations(client);
+        }catch(Exception ex){
+            pendingConsultations = null;
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }finally {
+            JpaUtil.fermerContextePersistance();
+        }
+
+        return pendingConsultations;
     }
 
     public List<Consultation> listerConsultationsRecente(Client client) {

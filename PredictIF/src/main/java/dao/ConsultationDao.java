@@ -17,28 +17,49 @@ public class ConsultationDao {
         JpaUtil.obtenirContextePersistance().persist(consultation);
     }
 
+    // Retourne les cinq dernières consultations terminées
     public List<Consultation> listerConsultationsRecentes(Client client){
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         String queryString = "SELECT c FROM Consultation c " +
-                            "WHERE c.client = :client "+
+                            "WHERE c.client = :client " +
+                            "AND c.etatConsultation = :termine "+
                             "ORDER BY c.date, c.heure desc";
 
         TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
         query.setParameter("client" , client);
+        query.setParameter("termine", Consultation.etat.TERMINEE);
 
         return query.setMaxResults(5).getResultList();
     }
 
+    // Retourne tous l'historique des consultations terminées d'un client
     public List<Consultation> getConsultationHistory(Client client){
         EntityManager em = JpaUtil.obtenirContextePersistance();
 
         String queryString = "SELECT c FROM Consultation c " +
-                "WHERE c.client = :client "+
+                "WHERE c.client = :client " +
+                "AND c.etatConsultation = :termine "+
                 "ORDER BY c.date, c.heure desc";
 
         TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
         query.setParameter("client" , client);
+        query.setParameter("termine", Consultation.etat.TERMINEE);
+
+        return query.getResultList();
+    }
+
+    public List<Consultation> getPendingConsultations(Client client){
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "SELECT c FROM Consultation c " +
+                "WHERE c.client = :client " +
+                "AND c.etatConsultation = :enAttente "+
+                "ORDER BY c.date, c.heure desc";
+
+        TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
+        query.setParameter("client" , client);
+        query.setParameter("enAttente", Consultation.etat.EN_ATTENTE);
 
         return query.getResultList();
     }
