@@ -141,6 +141,40 @@ public class Service {
         return res;
     }
 
+    public List<Consultation> getHistoriqueClient(Client client){
+        List<Consultation> historiqueClient;
+        JpaUtil.creerContextePersistance();
+
+        try{
+            historiqueClient = consultationDao.getConsultationHistory(client);
+        }catch(Exception ex){
+            historiqueClient = null;
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            JpaUtil.fermerContextePersistance();
+        }
+
+        return historiqueClient;
+    }
+
+    public List<Consultation> listerConsultationsRecente(Client client) {
+
+        JpaUtil.creerContextePersistance();
+
+        List<Consultation> top5;
+
+        try {
+            top5 = consultationDao.listerConsultationsRecentes(client);
+        } catch (Exception ex) {
+            top5 = null;
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            JpaUtil.fermerContextePersistance();
+        }
+
+        return top5;
+    }
+
     // Méthode utile pour éviter de retaper le code d'initialisation à la main
     public List<Client> initClients() {
         List<Client> clients = new ArrayList<>();
@@ -301,6 +335,18 @@ public class Service {
         return employeDao.sortEmployeByClientNumber();
     }
 
+    public List<String> demanderPrediction(String couleur, String animal, int amour, int sante, int travail) {
+        AstroNetApi inspiration = new AstroNetApi();
+        ArrayList<String> prediction = new ArrayList<>();
+        try {
+            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return prediction;
+    }
+
     /**
      * SECTION : CONSULTATION
      */
@@ -310,8 +356,13 @@ public class Service {
         try {
             JpaUtil.creerContextePersistance();
             Employe employe = employeDao.findAvailableEmploye(medium);
-            consultation = new Consultation(new Date(), new Date(), employe, client, medium); // la consultation n'a pas encore été accepté par l'employe mais on inittialise une consultation
+
+            // la consultation n'a pas encore été accepté par l'employe mais on inittialise une consultation
+            // La consultation sera en état EN_ATTENTE
+            consultation = new Consultation(new Date(), new Date(), employe, client, medium);
+
             JpaUtil.ouvrirTransaction();
+
             consultationDao.create(consultation);
             JpaUtil.validerTransaction();
         } catch (Exception e) {
@@ -322,9 +373,10 @@ public class Service {
         return consultation;
     }
 
+    // Permet de récupérer l'ensemble des consultations de l'employé passé en paramètre
     public List<Consultation> getConsultationsEnAttente(Employe employe) {
         JpaUtil.creerContextePersistance();
-        List<Consultation> consultationList = employeDao.getConsultations(employe);
+        List<Consultation> consultationList = consultationDao.getPendingConsultations(employe);
         JpaUtil.fermerContextePersistance();
         return consultationList;
     }
@@ -337,7 +389,7 @@ public class Service {
             JpaUtil.ouvrirTransaction();
 
             String msgClient = "Bonjour " + consultation.getClient().getPrenom() + ". J'ai bien reçu votre demande de consultation du " + consultation.getDate() + " à " + consultation.getHeure()
-                        + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
+                    + ".\n Vous pouvez dès à présent me contacter au " + consultation.getEmploye().getTelephone() + ". A tout de suite ! Médiumiquement vôtre, Mme Irma";
 
             Message.envoyerNotification(consultation.getClient().getNumTel(), msgClient);
 
@@ -356,51 +408,22 @@ public class Service {
         }
     }
 
-    public List<Consultation> listerConsultationsRecente(Client client) {
-
-        JpaUtil.creerContextePersistance();
-
-        List<Consultation> top5;
-
-        try {
-            top5 = consultationDao.listerConsultationsRecentes(client);
-        } catch (Exception ex) {
-            top5 = null;
-            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            JpaUtil.fermerContextePersistance();
-        }
-
-        return top5;
-    }
-
-    public List<Consultation> getHistoriqueClient(Client client){
-        List<Consultation> historiqueClient;
-        JpaUtil.creerContextePersistance();
-
-        try{
-            historiqueClient = consultationDao.getConsultationHistory(client);
-        }catch(Exception ex){
-            historiqueClient = null;
-            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            JpaUtil.fermerContextePersistance();
-        }
-
-        return historiqueClient;
-    }
-    
     public void finConsultation(Consultation consultation, final String commentaire) {
         Employe employe = consultation.getEmploye();
+        // Rajoute un commentaire à la consultation
         consultation.setCommentaire(commentaire);
+        // Set l'état de la consultation à TERMINEE
         consultation.setEtatConsultation(Consultation.etat.TERMINEE);
+        // Set la disponibilité de l'employe à DISPONIBLE
         employe.setDispo(Employe.disponibilite.DISPONIBLE);
         JpaUtil.creerContextePersistance();
         try {
             JpaUtil.ouvrirTransaction();
+            // Persiste l'ensemble des changements
             employeDao.updateDisponibilite(employe);
             consultationDao.updateCommentaire(consultation);
             consultationDao.updateEtatConsultation(consultation);
+
             JpaUtil.validerTransaction();
         }
         catch (Exception e1) {
@@ -410,18 +433,7 @@ public class Service {
             JpaUtil.fermerContextePersistance();
         }
     }
-    
-    public List<String> demanderPrediction(String couleur, String animal, int amour, int sante, int travail) {
-        AstroNetApi inspiration = new AstroNetApi();
-        ArrayList<String> prediction = new ArrayList<>();
-        try {
-            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return prediction;
-    }
+
 
     /**
      * SECTION : MEDIUM
@@ -505,7 +517,6 @@ public class Service {
         }
         return favouriteMediums;
     }
-
 
     public List<Medium> listerTousLesMediums() {
         JpaUtil.creerContextePersistance();

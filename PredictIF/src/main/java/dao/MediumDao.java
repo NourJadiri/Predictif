@@ -107,6 +107,7 @@ public class MediumDao {
         return query.getResultList();
     }
 
+    // Permet d'extraire la donnée d'une liste d'Object[] et de mettre les éléments dans une map
     private Map<Medium, Integer> getMediumNbConsultations(List<Object[]> resultList) {
         Map<Medium, Integer> favouriteMediums = new LinkedHashMap<>();
 

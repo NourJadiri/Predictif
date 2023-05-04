@@ -96,13 +96,5 @@ public class EmployeDao {
         return (Employe) resultList.get(0)[0];
     }
 
-    public List<Consultation> getConsultations(Employe employe) {
-        EntityManager em = JpaUtil.obtenirContextePersistance();
-        String queryString = "SELECT c from Consultation c WHERE c.employe = :employe and c.etatConsultation = :etatConsultation" ;
 
-        TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
-        query.setParameter("employe",employe);
-        query.setParameter("etatConsultation", Consultation.etat.EN_ATTENTE);
-        return query.getResultList();
-    }
 }

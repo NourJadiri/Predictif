@@ -2,6 +2,7 @@ package dao;
 
 import metier.modele.Client;
 import metier.modele.Consultation;
+import metier.modele.Employe;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -64,5 +65,15 @@ public class ConsultationDao {
         query.setParameter("etatConsultation", consultation.getEtatConsultation());
         query.setParameter("consultationId", consultation.getId());
         query.executeUpdate();
+    }
+
+    public List<Consultation> getPendingConsultations(Employe employe) {
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+        String queryString = "SELECT c from Consultation c WHERE c.employe = :employe and c.etatConsultation = :etatConsultation" ;
+
+        TypedQuery<Consultation> query = em.createQuery(queryString, Consultation.class);
+        query.setParameter("employe",employe);
+        query.setParameter("etatConsultation", Consultation.etat.EN_ATTENTE);
+        return query.getResultList();
     }
 }
