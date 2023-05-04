@@ -38,6 +38,26 @@ public class ClientDao {
         }
         return result;
     }
+
+    public void updateProfilAstral(Client client){
+        EntityManager em = JpaUtil.obtenirContextePersistance();
+
+        String queryString = "UPDATE Client c " +
+                "SET c.profilAstral.animal = :newAnimal, " +
+                "c.profilAstral.couleur = :newCouleur," +
+                "c.profilAstral.signeChinois = :newSigneChinois," +
+                "c.profilAstral.signeZodiaque = :newZodiaque " +
+                "WHERE c = :client";
+
+        TypedQuery<Client> query = em.createQuery(queryString, Client.class);
+        query.setParameter("newAnimal", client.getProfilAstral().getAnimal());
+        query.setParameter("newCouleur", client.getProfilAstral().getCouleur());
+        query.setParameter("newSigneChinois", client.getProfilAstral().getSigneChinois());
+        query.setParameter("newZodiaque", client.getProfilAstral().getSigneZodiaque());
+        query.setParameter("client", client);
+
+        query.executeUpdate();
+    }
     
     
 }

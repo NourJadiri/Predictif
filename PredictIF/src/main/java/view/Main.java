@@ -24,7 +24,7 @@ public class Main {
      */
     public static void main(String[] args) {
         JpaUtil.creerFabriquePersistance();
-        //initDb();
+        initDb();
         lancerApplication();
         JpaUtil.fermerFabriquePersistance();
     }

@@ -51,11 +51,19 @@ public class Service {
         Long res;
 
         try {
+
+            // Persistance du client
             JpaUtil.creerContextePersistance();
             JpaUtil.ouvrirTransaction();
-            client.setProfilAstral(new ProfilAstral(client.getPrenom(),client.getDateNaissance()));
             clientDao.create(client);
+
+            // Caclul du profil astral client et persistance
+            client.setProfilAstral(new ProfilAstral(client.getPrenom(),client.getDateNaissance()));
+            clientDao.updateProfilAstral(client);
+
             JpaUtil.validerTransaction();
+            JpaUtil.fermerContextePersistance();
+
             res = client.getId();
             Message.envoyerMail(mail, client.getMail(), "Bienvenue chez PREDICT'IF", msgSucces);
         } catch (Exception e1) {
@@ -63,7 +71,7 @@ public class Service {
             JpaUtil.annulerTransaction();
             res = null;
         } finally {
-            JpaUtil.fermerContextePersistance();
+
         }
         return res;
     }
@@ -101,7 +109,10 @@ public class Service {
         Client res = null;
         JpaUtil.creerContextePersistance();
         try {
+            // On cherche le mail correspondant à un client
             Client client = clientDao.findByMail(mail);
+
+            // Si le client est trouvé, et que le mot de passe correspond
             if (client != null && client.getMotDePasse().equals(MDP)) {
                 res = client;
             }
@@ -141,6 +152,7 @@ public class Service {
         Client client4 = new Client("Bob", "Williams", new Date(1978, 11, 10), "12 Maple St", "bobwilliams@example.com", "password4", "555-3456");
         Client client5 = new Client("Sarah", "Lee", new Date(1989, 7, 22), "34 Pine St", "sarahlee@example.com", "password5", "555-7890");
 
+        // ajout des clients dans la liste
         clients.add(client1);
         clients.add(client2);
         clients.add(client3);
@@ -151,6 +163,10 @@ public class Service {
             JpaUtil.creerContextePersistance();
             try {
                 JpaUtil.ouvrirTransaction();
+                // On persiste les clients
+
+                // On crée leurs profils astraux
+                c.setProfilAstral(new ProfilAstral(c.getPrenom(), c.getDateNaissance()));
                 clientDao.create(c);
                 JpaUtil.validerTransaction();
             } catch (Exception ex) {

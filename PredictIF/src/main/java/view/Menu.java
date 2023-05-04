@@ -36,6 +36,9 @@ public class Menu {
         // Si nouveau client, on lui crée un profil
         else if (choixClient == 2) {
             client = registerClient();
+            if(client == null){
+                client = authenticateClient();
+            }
         }
         else{
             loop = false;
@@ -120,10 +123,17 @@ public class Menu {
         System.out.println("Maintenant qu'on en sait un peu plus sur vous, il nous faudra des credentials");
 
         String mail = inputMail();
-        String motDePasse = inputString("Et enfin, votre mot de passe");
+        Client client;
 
-        Client client = new Client(nom , prenom , dateNaissance , adressePostale , mail , motDePasse , numTel);
-        sc.inscriptionClient(client);
+        if(mail != null){
+            String motDePasse = inputString("Et enfin, votre mot de passe");
+            client = new Client(nom , prenom , dateNaissance , adressePostale , mail , motDePasse , numTel);
+            sc.inscriptionClient(client);
+        }
+        else{
+            client = null;
+        }
+
 
         return client;
     }
@@ -133,7 +143,8 @@ public class Menu {
         List<Consultation> recentConsultations = sc.listerConsultationsRecente(client);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
-        if(recentConsultations.size() != 0){
+
+        if(!recentConsultations.isEmpty()){
             for(Consultation c : recentConsultations){
                 System.out.println("-Le " + dateFormat.format(c.getDate()) +
                         " à " + timeFormat.format(c.getDate()) + ", consultation avec " + c.getMedium().getDenomination());
@@ -372,7 +383,7 @@ public class Menu {
             Medium m = entry.getKey();
             Integer nbConsultations = entry.getValue();
 
-            System.out.print(" -" + m + " : " + nbConsultations);
+            System.out.print(" -" + m.getDenomination() + " : " + nbConsultations);
 
             if(nbConsultations > 1){
                 System.out.println(" consultations");
@@ -421,13 +432,15 @@ public class Menu {
                 add(i+1);
             }
         }};
+
         StringBuilder s = new StringBuilder();
         System.out.println("Prendre une de vos consultations en attente :\n");
         for (Consultation consultation : consultationList) {
-            s.append(consultationList.indexOf(consultation) + 1).append(". Client : ").append(consultation.getClient().getPrenom()).append(" ").append(consultation.getClient().getNom()).append(" Medium : ").append(consultation.getMedium().getDenomination()).append("\n");
+            s.append(consultationList.indexOf(consultation) + 1).append(". Client : ").append(consultation.getClient().getPrenom()).append(" || ").append(consultation.getClient().getNom()).append(" Medium : ").append(consultation.getMedium().getDenomination()).append("\n");
         }
-        System.out.println(consultationList);
+        //System.out.println(consultationList);
         System.out.println(choixconsultation);
+
         Consultation consultation = consultationList.get(Saisie.lireInteger(String.valueOf(s), choixconsultation)-1);
 
 
@@ -527,16 +540,21 @@ public class Menu {
         Service sc = new Service();
         do{
             mail = inputString("Veuillez entrer votre mail");
+
             test = sc.rechercherClientparMail(mail);
 
             if(test != null){
                 System.out.println("Ce mail existe déjà dans notre base de donnée.. Peut être voulez vous vous connecter ?");
                 do{
-                    System.out.println("oui/non");
+                    System.out.print("oui/non");
                     yesOrNo = Saisie.lireChaine("");
                 }while(!yesOrNo.equals("oui") && !yesOrNo.equals("non"));
+
+                if(yesOrNo.equals("oui")){
+                    mail = null;
+                }
             }
-        }while(test != null && yesOrNo == "non");
+        }while(test != null && yesOrNo.equals("non"));
 
         return mail;
     }
