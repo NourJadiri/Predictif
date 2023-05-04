@@ -283,6 +283,24 @@ public class Service {
         return employe;
     }
 
+    public Map<Employe, Integer> afficherRepartitionClientParEmploye(){
+        JpaUtil.creerContextePersistance();
+
+        return employeDao.sortEmployeByClientNumber();
+    }
+
+    public List<String> demanderPrediction(String couleur, String animal, int amour, int sante, int travail) {
+        AstroNetApi inspiration = new AstroNetApi();
+        ArrayList<String> prediction = new ArrayList<>();
+        try {
+            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return prediction;
+    }
+
     public List<Employe> initEmployes() {
         ArrayList<Employe> employes = new ArrayList<>();
 
@@ -343,24 +361,6 @@ public class Service {
         }
 
         return employes;
-    }
-
-    public Map<Employe, Integer> afficherRepartitionClientParEmploye(){
-        JpaUtil.creerContextePersistance();
-
-        return employeDao.sortEmployeByClientNumber();
-    }
-
-    public List<String> demanderPrediction(String couleur, String animal, int amour, int sante, int travail) {
-        AstroNetApi inspiration = new AstroNetApi();
-        ArrayList<String> prediction = new ArrayList<>();
-        try {
-            prediction.addAll(inspiration.getPredictions(couleur, animal, amour, sante, travail));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return prediction;
     }
 
     /**
